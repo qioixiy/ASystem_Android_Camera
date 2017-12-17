@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import me.weyye.hipermission.HiPermission;
 import me.weyye.hipermission.PermissionCallback;
@@ -32,6 +34,7 @@ import me.weyye.hipermission.PermissionCallback;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private CameraView cameraView;
+    public File mVideoFile = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,22 +48,38 @@ public class MainActivity extends AppCompatActivity {
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
             public void onEvent(CameraKitEvent cameraKitEvent) {
-
+                ;
             }
 
             @Override
             public void onError(CameraKitError cameraKitError) {
-
+                ;
             }
 
             @Override
             public void onImage(CameraKitImage cameraKitImage) {
 
+                Log.i(TAG, cameraKitImage.getMessage());
             }
 
             @Override
             public void onVideo(CameraKitVideo cameraKitVideo) {
+                Log.i(TAG, cameraKitVideo.getVideoFile().getName());
 
+                // 其次把文件插入到系统图库
+                try {
+                    MediaStore.Images.Media.insertImage(getContentResolver(),
+                            mVideoFile.getAbsolutePath(), mVideoFile.getName(), null);
+                    showToast("保存成功" + mVideoFile);
+                } catch (FileNotFoundException e) {
+                    showToast("保存失败");
+                    e.printStackTrace();
+                }
+                // 最后通知图库更新
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                        Uri.fromFile(mVideoFile)));
+
+                mVideoFile = null;
             }
         });
     }
@@ -78,14 +97,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void toggleButtonOnClickStart(View v) {
-        cameraView.captureVideo();
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String path = "/storage/emulated/0/Camera/video_" + timeStamp + ".mp4";
+
+        mVideoFile = new File(path);
+        cameraView.captureVideo(mVideoFile);
     }
 
     void toggleButtonOnClickStop(View v) {
         cameraView.stopVideo();
     }
 
-    private void showToast(String text) {
+    public void showToast(String text) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
