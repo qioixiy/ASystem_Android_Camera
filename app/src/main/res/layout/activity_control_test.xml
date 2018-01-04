@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/border_line_while"
+        android:gravity="center"
+        android:text="边框样式"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/btn_bg_red"
+        android:gravity="center"
+        android:text="圆角Button"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/check_border"
+        android:gravity="center"
+        android:text="带边框颜色的Button"
+        />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/btn_nor_down"
+        android:gravity="center"
+        android:text="带点击状态的Button"
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dip"
+        android:layout_weight="1"
+        android:background="@drawable/btn_bottom_confirm_bg"
+        android:gravity="center"
+        android:text="带点击状态的Button"
+        />
+
+    <Button
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dip"
+        android:background="@drawable/hint_superscript_red"
+        android:gravity="center"
+        android:text="数字提醒"
+        />
+
+    <ProgressBar
+        android:layout_width="50dip"
+        android:layout_height="50dip"
+        android:layout_marginLeft="20dp"
+        android:indeterminate="true"
+        android:indeterminateDrawable="@drawable/progresstyle"
+        android:indeterminateTintMode="src_in"/>
+
+    <ProgressBar
+        android:id="@+id/my_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:max="10"
+        android:progress="3"
+        android:progressDrawable="@drawable/progressbar_color"/>
+
+    <EditText
+        android:text="底部线条EditText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/edit_for_line_bg"
+        />
+
+</LinearLayout>
