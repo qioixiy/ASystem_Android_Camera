@@ -6,4 +6,5 @@
     <color name="theme_red">#ff4066</color>
     <color name="color_check_bg">#ff408c</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
 </resources>

@@ -33,8 +33,10 @@ import me.weyye.hipermission.PermissionCallback;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+
     private CameraView cameraView;
-    public File mVideoFile = null;
+    private File mVideoFile = null;
+    private boolean mCanBeStart = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,16 +98,41 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    void toggleButtonOnClickStart(View v) {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String path = "/storage/emulated/0/Camera/video_" + timeStamp + ".mp4";
+    private void updateSelect() {
 
-        mVideoFile = new File(path);
-        cameraView.captureVideo(mVideoFile);
+        Button btn_start = (Button)findViewById(R.id.button_capture_start);
+        Button btn_stop = (Button)findViewById(R.id.button_capture_stop);
+
+        if (!mCanBeStart) {
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String path = "/storage/emulated/0/Camera/video_" + timeStamp + ".mp4";
+
+            mVideoFile = new File(path);
+            cameraView.captureVideo(mVideoFile);
+        } else {
+            cameraView.stopVideo();
+        }
+
+        btn_start.setEnabled(mCanBeStart);
+        btn_stop.setEnabled(!mCanBeStart);
+    }
+
+    void toggleButtonOnClickStart(View v) {
+        if (!mCanBeStart) {
+            return;
+        }
+        mCanBeStart = false;
+
+        updateSelect();
     }
 
     void toggleButtonOnClickStop(View v) {
-        cameraView.stopVideo();
+        if (mCanBeStart) {
+            return;
+        }
+        mCanBeStart = true;
+
+        updateSelect();
     }
 
     public void showToast(String text) {
