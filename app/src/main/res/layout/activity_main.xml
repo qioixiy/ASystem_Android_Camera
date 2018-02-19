@@ -32,7 +32,7 @@
             android:enabled="false"
             android:text="@string/stop" />
 
-        <com.xyzvendor.widget.UpdateTimeTextView
+        <com.xyz.vendor.widget.UpdateTimeTextView
             android:id="@+id/info_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
