@@ -16,6 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import com.xxzoo.xyz.drivingRecorder.R;
+
 import java.util.ArrayList;
 
 public class MediaPlayerActivity extends Activity implements View.OnClickListener{
