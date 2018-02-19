@@ -31,8 +31,8 @@ import java.util.Date;
 import me.weyye.hipermission.HiPermission;
 import me.weyye.hipermission.PermissionCallback;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class RecorderMainActivity extends AppCompatActivity {
+    private static final String TAG = RecorderMainActivity.class.getSimpleName();
 
     private CameraView cameraView;
     private File mVideoFile = null;
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_recorder_main);
 
         checkPermission(this);
 
