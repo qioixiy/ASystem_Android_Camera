@@ -27,14 +27,18 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.xyz.drivingRecorder.RecorderMainActivity"></activity>
+        <activity
+            android:name=".RecorderMainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoManageActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

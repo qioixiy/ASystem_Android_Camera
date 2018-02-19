@@ -73,6 +73,18 @@ public class RecorderMainActivity extends AppCompatActivity {
                     MediaStore.Images.Media.insertImage(getContentResolver(),
                             mVideoFile.getAbsolutePath(), mVideoFile.getName(), null);
                     showToast("保存成功" + mVideoFile);
+
+                    VideoDataModel videoDataModel = new VideoDataModel();
+                    videoDataModel.setContext(RecorderMainActivity.this);
+                    VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
+
+                    String name = mVideoFile.getName();
+                    String path = mVideoFile.getAbsolutePath();
+                    videoMetaData.setName(name);
+                    videoMetaData.setPath(path);
+                    videoDataModel.insertVideoMetaData(videoMetaData);
+
+                    Log.i(TAG, path);
                 } catch (FileNotFoundException e) {
                     showToast("保存失败");
                     e.printStackTrace();

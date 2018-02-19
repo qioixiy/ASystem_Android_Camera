@@ -83,9 +83,10 @@ public class MainActivity extends Activity {
 
                 switch (position) {
                     case 0:
+                        Intent it = new Intent(MainActivity.this, VideoManageActivity.class);
+                        startActivity(it);
                         break;
-                    case 1:
-                        Intent it = new Intent(MainActivity.this, RecorderMainActivity.class); //
+                    case 1:it = new Intent(MainActivity.this, RecorderMainActivity.class); //
                         Bundle b = new Bundle();
                         b.putString("data", str);  //string
                         b.putSerializable("data", str);
