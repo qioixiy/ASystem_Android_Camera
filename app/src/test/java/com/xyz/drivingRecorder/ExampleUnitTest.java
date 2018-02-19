@@ -1,4 +1,4 @@
-package com.xxzoo.xyz.drivingRecorder;
+package com.xyz.drivingRecorder;
 
 import org.junit.Test;
 

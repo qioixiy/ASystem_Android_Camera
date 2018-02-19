@@ -1,4 +1,4 @@
-package com.xxzoo.xyz.vendor.widget;
+package com.xyz.vendor.widget;
 
 import android.content.Context;
 import android.os.Handler;
