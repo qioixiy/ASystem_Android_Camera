@@ -28,8 +28,8 @@ class FunctionList {
     public List<FunctionItem> get() {
         if (null == functionItemList) {
             functionItemList = new ArrayList<FunctionItem>();
-            functionItemList.add(new FunctionItem("管理视频", "管理录制视频"));
-            functionItemList.add(new FunctionItem("视频录制", "管理录制视频"));
+            functionItemList.add(new FunctionItem("管理视频", "管理录制的视频"));
+            functionItemList.add(new FunctionItem("视频录制", "开始录制视频"));
             functionItemList.add(new FunctionItem("设置", "多种设置选项"));
         }
 

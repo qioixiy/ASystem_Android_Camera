@@ -17,6 +17,8 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
+    private String TAG = "MainActivity";
+
     private ListView mListView;
     private BaseAdapter adapter;
 
@@ -48,13 +50,13 @@ public class MainActivity extends Activity {
                     view = inflater.inflate(R.layout.item_main, null);
                 } else {
                     view = convertView;
-                    Log.i("info", "有缓存，不需要重新生成" + position);
+                    Log.i(TAG, "有缓存，不需要重新生成" + position);
                 }
                 TextView tTextView1 = (TextView) view.findViewById(R.id.textViewName);
-                tTextView1.setText(mFunctionList.get(position).getContext());//设置参数
+                tTextView1.setText(mFunctionList.get(position).getName());
 
                 TextView tTextView2 = (TextView) view.findViewById(R.id.textViewContent);
-                tTextView2.setText(mFunctionList.get(position).getName());//设置参数
+                tTextView2.setText(mFunctionList.get(position).getContext());
 
                 return view;
             }
@@ -81,6 +83,8 @@ public class MainActivity extends Activity {
 
                 switch (position) {
                     case 0:
+                        break;
+                    case 1:
                         Intent it = new Intent(MainActivity.this, RecorderMainActivity.class); //
                         Bundle b = new Bundle();
                         b.putString("data", str);  //string
