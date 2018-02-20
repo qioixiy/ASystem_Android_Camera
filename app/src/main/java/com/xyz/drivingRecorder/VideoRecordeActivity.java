@@ -49,6 +49,14 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_recorder_main);
 
+        String dir = getStoragePathBase();
+        //新建一个File，传入文件夹目录
+        File file = new File(dir);
+        //判断文件夹是否存在，如果不存在就创建，否则不创建
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
         checkPermission(this);
         initCameraView();
 
@@ -142,8 +150,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
         btn_stop.setEnabled(!mCanBeStart);
     }
 
-    private String getStoragePathBase() {
-        return "/storage/emulated/0/Camera/";
+    public static String getStoragePathBase() {
+        // File extDir = Environment.getExternalStorageDirectory();
+        return "/storage/emulated/0/drivingRecorder/";
     }
 
     void toggleButtonOnClickStart(View v) {

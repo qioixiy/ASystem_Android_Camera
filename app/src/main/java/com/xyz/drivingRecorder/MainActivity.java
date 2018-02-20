@@ -160,7 +160,7 @@ public class MainActivity extends Activity {
 
             TextView mSensorInfoA = (TextView) findViewById(R.id.main_textview_sensor_info_a);
 
-            mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+            //mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
 
             int sensorType = event.sensor.getType();
             float[] values = event.values;

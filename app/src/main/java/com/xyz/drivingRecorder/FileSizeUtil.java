@@ -1,9 +1,11 @@
 package com.xyz.drivingRecorder;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 public class FileSizeUtil {
@@ -152,5 +154,66 @@ public class FileSizeUtil {
                 break;
         }
         return fileSizeLong;
+    }
+
+    /**
+     * 获取文件夹大小
+     * @param file File实例
+     * @return long
+     */
+    public static long getFolderSize(java.io.File file){
+
+        long size = 0;
+        try {
+            java.io.File[] fileList = file.listFiles();
+            for (int i = 0; i < fileList.length; i++)
+            {
+                if (fileList[i].isDirectory())
+                {
+                    size = size + getFolderSize(fileList[i]);
+
+                }else{
+                    size = size + fileList[i].length();
+
+                }
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //return size/1048576;
+        return size;
+    }
+
+    /**
+     * 格式化单位
+     * @param size
+     * @return
+     */
+    public static String getFormatSize(double size) {
+        double kiloByte = size/1024;
+        if(kiloByte < 1) {
+            return size + "Byte(s)";
+        }
+
+        double megaByte = kiloByte/1024;
+        if(megaByte < 1) {
+            BigDecimal result1 = new BigDecimal(Double.toString(kiloByte));
+            return result1.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "KB";
+        }
+
+        double gigaByte = megaByte/1024;
+        if(gigaByte < 1) {
+            BigDecimal result2  = new BigDecimal(Double.toString(megaByte));
+            return result2.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "MB";
+        }
+
+        double teraBytes = gigaByte/1024;
+        if(teraBytes < 1) {
+            BigDecimal result3 = new BigDecimal(Double.toString(gigaByte));
+            return result3.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "GB";
+        }
+        BigDecimal result4 = new BigDecimal(teraBytes);
+        return result4.setScale(2, BigDecimal.ROUND_HALF_UP).toPlainString() + "TB";
     }
 }

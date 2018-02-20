@@ -3,8 +3,11 @@ package com.xyz.drivingRecorder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SettingActivity extends AppCompatActivity {
     private SeekBar seekBarProgressSensitivity;
@@ -15,6 +18,8 @@ public class SettingActivity extends AppCompatActivity {
 
     private SeekBar seekBarProgressVideoStorageSize;
     private TextView textViewVideoStorageSize;
+
+    private Button btnClean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +83,17 @@ public class SettingActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        btnClean = (Button)findViewById(R.id.button_clean);
+        btnClean.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String path = VideoRecordeActivity.getStoragePathBase();
+                DeleteFileUtil.deleteDirectory(path);
+
+                Toast.makeText(SettingActivity.this, "清空", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
