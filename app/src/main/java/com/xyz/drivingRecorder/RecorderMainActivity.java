@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -38,13 +39,22 @@ public class RecorderMainActivity extends AppCompatActivity {
     private File mVideoFile = null;
     private boolean mCanBeStart = true;
 
+    Handler mDelayHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String data = getIntent().getStringExtra("data");
+
         setContentView(R.layout.activity_recorder_main);
 
         checkPermission(this);
         initCameraView();
+
+        if (data.equals("active_trigger")) {
+            mDelayHandler.postDelayed(new TriggerRunnable(this), 200);
+        }
     }
 
     private void initCameraView() {
@@ -210,5 +220,16 @@ public class RecorderMainActivity extends AppCompatActivity {
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
     }
 
+    private class TriggerRunnable implements Runnable {
 
+        private Context context;
+        public TriggerRunnable(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            toggleButtonOnClickStart(null);
+        }
+    }
 }
