@@ -1,7 +1,12 @@
 package com.xyz.drivingRecorder;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,11 +29,40 @@ public class MainActivity extends Activity {
 
     private List<FunctionList.FunctionItem> mFunctionList;//实体类
 
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private TestSensorListener mSensorListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initListView();
+        initSensorInfo();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // 注册传感器监听函数
+        mSensorManager.registerListener(mSensorListener, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 注销监听函数
+        mSensorManager.unregisterListener(mSensorListener);
+    }
+
+    private void initSensorInfo() {
+        mSensorListener = new TestSensorListener();
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
+
+    private void initListView() {
         mListView = (ListView) findViewById(R.id.function_listView);
 
         mFunctionList = FunctionList.instance().get();
@@ -98,5 +132,23 @@ public class MainActivity extends Activity {
                 }
             }
         });
+    }
+
+    class TestSensorListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
+            //Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+
+            TextView mSensorInfoA = (TextView) findViewById(R.id.main_textview_sensor_info_a);
+
+            mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            Log.i(TAG, "onAccuracyChanged");
+        }
     }
 }
