@@ -44,7 +44,10 @@ public class RecorderMainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recorder_main);
 
         checkPermission(this);
+        initCameraView();
+    }
 
+    private void initCameraView() {
         cameraView = (CameraView)findViewById(R.id.camera);
 
         cameraView.addCameraKitListener(new CameraKitEventListener() {

@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -31,7 +31,8 @@ public class MainActivity extends Activity {
 
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
-    private TestSensorListener mSensorListener;
+    private MySensorListener mSensorListener;
+    private Vibrator mVibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +58,10 @@ public class MainActivity extends Activity {
     }
 
     private void initSensorInfo() {
-        mSensorListener = new TestSensorListener();
+        mSensorListener = new MySensorListener();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mVibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
     }
 
     private void initListView() {
@@ -120,13 +122,8 @@ public class MainActivity extends Activity {
                         Intent it = new Intent(MainActivity.this, VideoManageActivity.class);
                         startActivity(it);
                         break;
-                    case 1:it = new Intent(MainActivity.this, RecorderMainActivity.class); //
-                        Bundle b = new Bundle();
-                        b.putString("data", str);  //string
-                        b.putSerializable("data", str);
-                        it.putExtra("data", str);
-                        it.putExtras(b);
-                        startActivity(it);
+                    case 1:
+                        startRecorderMainActivity("active_normal");
                     default:
                         break;
                 }
@@ -134,7 +131,18 @@ public class MainActivity extends Activity {
         });
     }
 
-    class TestSensorListener implements SensorEventListener {
+    private void startRecorderMainActivity(String str) {
+
+        Intent it = new Intent(MainActivity.this, RecorderMainActivity.class); //
+        Bundle b = new Bundle();
+        b.putString("data", str);  //string
+        b.putSerializable("data", str);
+        it.putExtra("data", str);
+        it.putExtras(b);
+        startActivity(it);
+    }
+
+    class MySensorListener implements SensorEventListener {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
@@ -144,6 +152,17 @@ public class MainActivity extends Activity {
             TextView mSensorInfoA = (TextView) findViewById(R.id.main_textview_sensor_info_a);
 
             mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+
+            int sensorType = event.sensor.getType();
+            float[] values = event.values;
+            if (sensorType == Sensor.TYPE_ACCELEROMETER){
+                if (Math.abs(values[0]) > 14 || Math.abs(values[1]) > 14 || Math.abs(values[2]) > 14){
+                    mVibrator.vibrate(100);
+                    //进行手机晃动的监听  ，可以在这里实现 intent 等效果
+
+                    startRecorderMainActivity("active_trigger");
+                }
+            }
         }
 
         @Override
