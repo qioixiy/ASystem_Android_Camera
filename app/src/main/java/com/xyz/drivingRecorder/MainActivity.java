@@ -137,7 +137,7 @@ public class MainActivity extends Activity {
 
     private void startRecorderMainActivity(String str) {
 
-        Intent it = new Intent(MainActivity.this, RecorderMainActivity.class); //
+        Intent it = new Intent(MainActivity.this, VideoRecordeActivity.class); //
         Bundle b = new Bundle();
         b.putString("data", str);  //string
         b.putSerializable("data", str);

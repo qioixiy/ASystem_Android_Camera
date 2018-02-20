@@ -32,8 +32,8 @@ import java.util.Date;
 import me.weyye.hipermission.HiPermission;
 import me.weyye.hipermission.PermissionCallback;
 
-public class RecorderMainActivity extends AppCompatActivity {
-    private static final String TAG = RecorderMainActivity.class.getSimpleName();
+public class VideoRecordeActivity extends AppCompatActivity {
+    private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
     private CameraView cameraView;
     private File mVideoFile = null;
@@ -88,7 +88,7 @@ public class RecorderMainActivity extends AppCompatActivity {
                     showToast("保存成功" + mVideoFile);
 
                     VideoDataModel videoDataModel = new VideoDataModel();
-                    videoDataModel.setContext(RecorderMainActivity.this);
+                    videoDataModel.setContext(VideoRecordeActivity.this);
                     VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
 
                     String name = mVideoFile.getName();
@@ -149,6 +149,9 @@ public class RecorderMainActivity extends AppCompatActivity {
         mCanBeStart = false;
 
         updateSelect();
+
+
+        mDelayHandler.postDelayed(new TimeoutRunnable(this), SettingDataModel.getVideoFileTimeSize()*1000);
     }
 
     void toggleButtonOnClickStop(View v) {
@@ -230,6 +233,19 @@ public class RecorderMainActivity extends AppCompatActivity {
         @Override
         public void run() {
             toggleButtonOnClickStart(null);
+        }
+    }
+
+    private class TimeoutRunnable implements Runnable {
+
+        private Context context;
+        public TimeoutRunnable(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void run() {
+            toggleButtonOnClickStop(null);
         }
     }
 }

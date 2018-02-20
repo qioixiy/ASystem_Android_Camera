@@ -7,8 +7,11 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class SettingActivity extends AppCompatActivity {
-    private SeekBar seekBar;
-    private TextView textView;
+    private SeekBar seekBarProgressSensitivity;
+    private TextView textViewSensitivity;
+
+    private SeekBar seekBarProgressVideoSize;
+    private TextView textViewVideoSize;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,29 +22,41 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        seekBar = (SeekBar) findViewById(R.id.progress);
-        textView = (TextView) findViewById(R.id.text1);
+        seekBarProgressSensitivity = (SeekBar) findViewById(R.id.progress_Sensitivity);
+        textViewSensitivity = (TextView) findViewById(R.id.text_Sensitivity);
 
+        seekBarProgressVideoSize = (SeekBar) findViewById(R.id.progress_video_size);
+        textViewVideoSize = (TextView) findViewById(R.id.text_video_size);
 
-        textView.setText(Integer.toString(20));
-        SettingDataModel.setCollisionDetectionSensitivity(20);
+        textViewSensitivity.setText(Integer.toString(SettingDataModel.getCollisionDetectionSensitivity()));;
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarProgressSensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText(Integer.toString(progress));
+                textViewSensitivity.setText(Integer.toString(progress));
                 SettingDataModel.setCollisionDetectionSensitivity(progress);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Log.e("------------", "开始滑动！");
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        textViewVideoSize.setText(Integer.toString(SettingDataModel.getVideoFileTimeSize()));
+        seekBarProgressVideoSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewVideoSize.setText(Integer.toString(progress));
+                SettingDataModel.setVideoFileTimeSize(progress);
             }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.e("------------", "停止滑动！");
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 }
