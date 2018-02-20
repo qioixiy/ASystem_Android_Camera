@@ -175,7 +175,7 @@ public class RecorderMainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFinish() {
-                        showToast("所有权限申请完成");
+                        /*showToast("所有权限申请完成");*/
                     }
 
                     @Override
