@@ -124,6 +124,10 @@ public class MainActivity extends Activity {
                         break;
                     case 1:
                         startRecorderMainActivity("active_normal");
+                        break;
+                    case 2:
+                        startSettingActivity();
+                        break;
                     default:
                         break;
                 }
@@ -142,6 +146,11 @@ public class MainActivity extends Activity {
         startActivity(it);
     }
 
+    private void startSettingActivity() {
+        Intent it = new Intent(MainActivity.this, SettingActivity.class);
+        startActivity(it);
+    }
+
     class MySensorListener implements SensorEventListener {
 
         @Override
@@ -156,7 +165,8 @@ public class MainActivity extends Activity {
             int sensorType = event.sensor.getType();
             float[] values = event.values;
             if (sensorType == Sensor.TYPE_ACCELEROMETER){
-                if (Math.abs(values[0]) > 14 || Math.abs(values[1]) > 14 || Math.abs(values[2]) > 14){
+                int limit = SettingDataModel.getCollisionDetectionSensitivity();
+                if (Math.abs(values[0]) > limit || Math.abs(values[1]) > limit || Math.abs(values[2]) > limit){
                     mVibrator.vibrate(100);
                     //进行手机晃动的监听  ，可以在这里实现 intent 等效果
 

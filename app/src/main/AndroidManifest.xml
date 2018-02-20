@@ -39,6 +39,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".VideoManageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/app_setting"
             android:screenOrientation="portrait"></activity>
     </application>
 
