@@ -130,7 +130,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         if (!mCanBeStart) {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String path = "/storage/emulated/0/Camera/video_" + timeStamp + ".mp4";
+            String path = getStoragePathBase() + "video_" + timeStamp + ".mp4";
 
             mVideoFile = new File(path);
             cameraView.captureVideo(mVideoFile);
@@ -142,7 +142,18 @@ public class VideoRecordeActivity extends AppCompatActivity {
         btn_stop.setEnabled(!mCanBeStart);
     }
 
+    private String getStoragePathBase() {
+        return "/storage/emulated/0/Camera/";
+    }
+
     void toggleButtonOnClickStart(View v) {
+
+        // check storage space
+        if (!checkStorageHaveSpace()) {
+            showToast("空间不足，需要先释放存储空间");
+            return;
+        }
+
         if (!mCanBeStart) {
             return;
         }
@@ -150,8 +161,17 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         updateSelect();
 
-
         mDelayHandler.postDelayed(new TimeoutRunnable(this), SettingDataModel.getVideoFileTimeSize()*1000);
+    }
+
+    private boolean checkStorageHaveSpace() {
+        double size = FileSizeUtil.getFileOrFilesSize(getStoragePathBase(), FileSizeUtil.SIZETYPE_B);
+        int limit = SettingDataModel.getVideoStorageSize() * 1000 * 1000;
+        if (size > limit) {
+            return false;
+        }
+
+        return true;
     }
 
     void toggleButtonOnClickStop(View v) {

@@ -13,6 +13,9 @@ public class SettingActivity extends AppCompatActivity {
     private SeekBar seekBarProgressVideoSize;
     private TextView textViewVideoSize;
 
+    private SeekBar seekBarProgressVideoStorageSize;
+    private TextView textViewVideoStorageSize;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +30,9 @@ public class SettingActivity extends AppCompatActivity {
 
         seekBarProgressVideoSize = (SeekBar) findViewById(R.id.progress_video_size);
         textViewVideoSize = (TextView) findViewById(R.id.text_video_size);
+
+        seekBarProgressVideoStorageSize = (SeekBar) findViewById(R.id.progress_storage_size);
+        textViewVideoStorageSize = (TextView) findViewById(R.id.text_storage_size);
 
         textViewSensitivity.setText(Integer.toString(SettingDataModel.getCollisionDetectionSensitivity()));;
 
@@ -50,6 +56,21 @@ public class SettingActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textViewVideoSize.setText(Integer.toString(progress));
                 SettingDataModel.setVideoFileTimeSize(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        textViewVideoStorageSize.setText(Integer.toString(SettingDataModel.getVideoStorageSize()));
+        seekBarProgressVideoStorageSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewVideoStorageSize.setText(Integer.toString(progress));
+                SettingDataModel.setVideoStorageSize(progress);
             }
 
             @Override
