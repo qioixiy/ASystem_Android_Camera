@@ -71,14 +71,6 @@ public class ListViewSlideAdapter extends BaseAdapter {
                 }
             }
         });
-        viewHolder.tvEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (onClickListenerEditOrDelete != null) {
-                    onClickListenerEditOrDelete.OnClickListenerEdit(position);
-                }
-            }
-        });
         viewHolder.btn_play.setOnClickListener(new View.OnClickListener() {
 
             @Override
