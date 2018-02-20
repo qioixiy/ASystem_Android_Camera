@@ -83,7 +83,7 @@ public class SlideListView extends ListView {
                     scroll = -mDeleteBtnWidth;
                 }
                 // 重新设置leftMargin
-                mLayoutParams.leftMargin = scroll * 2;
+                mLayoutParams.leftMargin = scroll;
                 mPointChild.getChildAt(0).setLayoutParams(mLayoutParams);
             }
             return true;
@@ -96,7 +96,7 @@ public class SlideListView extends ListView {
         // 偏移量大于button的一半，则显示button
         // 否则恢复默认
         if (-mLayoutParams.leftMargin >= mDeleteBtnWidth / 2) {
-            mLayoutParams.leftMargin = -mDeleteBtnWidth * 2;
+            mLayoutParams.leftMargin = -mDeleteBtnWidth;
             isDeleteShown = true;
         } else {
             turnToNormal();
