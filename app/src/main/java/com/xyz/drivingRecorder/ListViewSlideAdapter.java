@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,6 +52,8 @@ public class ListViewSlideAdapter extends BaseAdapter {
             viewHolder.img = (ImageView) view.findViewById(R.id.imgLamp);
             viewHolder.tvDelete = (TextView) view.findViewById(R.id.delete);
             viewHolder.tvEdit = (TextView) view.findViewById(R.id.tvEdit);
+            viewHolder.btn_play = (Button)view.findViewById(R.id.button_item_slide_video_play);
+
             view.setTag(viewHolder);//store up viewHolder
         } else {
             view = convertView;
@@ -73,6 +76,15 @@ public class ListViewSlideAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if (onClickListenerEditOrDelete != null) {
                     onClickListenerEditOrDelete.OnClickListenerEdit(position);
+                }
+            }
+        });
+        viewHolder.btn_play.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (mInnerItemOnClickListener != null) {
+                    mInnerItemOnClickListener.onClick(position);
                 }
             }
         });
@@ -100,6 +112,7 @@ public class ListViewSlideAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView tvName, tvContext, tvEdit, tvDelete;
         ImageView img;
+        Button btn_play;
     }
 
     public interface OnClickListenerEditOrDelete {
