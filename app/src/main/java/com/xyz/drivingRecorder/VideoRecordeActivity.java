@@ -49,6 +49,21 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_recorder_main);
 
+        Button capture_start = findViewById(R.id.button_capture_start);
+        capture_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleButtonOnClickStart(v);
+            }
+        });
+        Button capture_stop = findViewById(R.id.button_capture_stop);
+        capture_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleButtonOnClickStop(v);
+            }
+        });
+
         String dir = getStoragePathBase();
         //新建一个File，传入文件夹目录
         File file = new File(dir);
