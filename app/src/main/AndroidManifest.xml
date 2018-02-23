@@ -43,7 +43,8 @@
         <activity
             android:name=".SettingActivity"
             android:label="@string/app_setting"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity android:name=".VideoRecorde2Activity" />
     </application>
 
 </manifest>

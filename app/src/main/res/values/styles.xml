@@ -18,4 +18,11 @@
         <item name="android:textColor">?android:textColorSecondary</item>
     </style>
 
+    <!--<style name="MovieRecorderView">-->
+        <!--<item name="MovieRecorderView_record_width">640</item>-->
+        <!--<item name="MovieRecorderView_record_height">360</item>-->
+        <!--<item name="MovieRecorderView_is_open_camera">true</item>-->
+        <!--<item name="MovieRecorderView_record_max_time">10</item>-->
+    <!--</style>-->
+
 </resources>
