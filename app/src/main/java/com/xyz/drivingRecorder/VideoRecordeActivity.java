@@ -39,14 +39,41 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private File mVideoFile = null;
     private boolean mCanBeStart = true;
 
-    Handler mDelayHandler = new Handler();
+    private Handler mDelayHandler = new Handler();
+
+    private MovieRecorderView movieRecorderView;
+
+    private AcitivityLifeCycle mAcitivityLifeCycle;
+    private VideoRecorderMethod mVideoRecorderMethod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String data = getIntent().getStringExtra("data");
+        initSys();
 
+        initView();
+        //initView2();
+    }
+
+    private void initSys() {
+        String data = getIntent().getStringExtra("data");
+        if (data.equals("active_trigger")) {
+            mDelayHandler.postDelayed(new TriggerRunnable(this), 200);
+        }
+
+        String dir = getStoragePathBase();
+        //新建一个File，传入文件夹目录
+        File file = new File(dir);
+        //判断文件夹是否存在，如果不存在就创建，否则不创建
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+
+        checkPermission(this);
+    }
+
+    private void initView() {
         setContentView(R.layout.activity_recorder_main);
 
         Button capture_start = findViewById(R.id.button_capture_start);
@@ -64,20 +91,40 @@ public class VideoRecordeActivity extends AppCompatActivity {
             }
         });
 
-        String dir = getStoragePathBase();
-        //新建一个File，传入文件夹目录
-        File file = new File(dir);
-        //判断文件夹是否存在，如果不存在就创建，否则不创建
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-
-        checkPermission(this);
         initCameraView();
 
-        if (data.equals("active_trigger")) {
-            mDelayHandler.postDelayed(new TriggerRunnable(this), 200);
-        }
+        mAcitivityLifeCycle = new AcitivityLifeCycle() {
+            @Override
+            public void onResume() {
+                cameraView.start();
+            }
+
+            @Override
+            public void onPause() {
+                cameraView.stop();
+            }
+        };
+    }
+
+    private void initView2() {
+
+        setContentView(R.layout.activity_video_recorder2);
+
+        movieRecorderView = (MovieRecorderView)findViewById(R.id.camera);
+    }
+
+    public void startRecord(View v) {
+
+        movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
+            @Override
+            public void onRecordFinish() {
+                Log.e(TAG, "done");
+            }
+        });
+    }
+
+    public void stopRecord(View v) {
+        movieRecorderView.stopRecord();
     }
 
     private void initCameraView() {
@@ -134,22 +181,33 @@ public class VideoRecordeActivity extends AppCompatActivity {
         });
     }
 
+    public interface AcitivityLifeCycle {
+        void onResume();
+        void onPause();
+    }
+
+    public interface VideoRecorderMethod {
+        void start();
+        void stop();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        cameraView.start();
+        if (mAcitivityLifeCycle != null) {
+            mAcitivityLifeCycle.onResume();
+        }
     }
 
     @Override
     protected void onPause() {
-        cameraView.stop();
+        if (mAcitivityLifeCycle != null) {
+            mAcitivityLifeCycle.onPause();
+        }
         super.onPause();
     }
 
     private void updateSelect() {
-
-        Button btn_start = (Button)findViewById(R.id.button_capture_start);
-        Button btn_stop = (Button)findViewById(R.id.button_capture_stop);
 
         if (!mCanBeStart) {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -161,6 +219,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
             cameraView.stopVideo();
         }
 
+        Button btn_start = (Button)findViewById(R.id.button_capture_start);
+        Button btn_stop = (Button)findViewById(R.id.button_capture_stop);
         btn_start.setEnabled(mCanBeStart);
         btn_stop.setEnabled(!mCanBeStart);
     }

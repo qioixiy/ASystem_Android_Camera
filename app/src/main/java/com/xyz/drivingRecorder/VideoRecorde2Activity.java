@@ -17,7 +17,7 @@ public class VideoRecorde2Activity extends AppCompatActivity {
         movieRecorderView = (MovieRecorderView)findViewById(R.id.camera);
     }
 
-    public void startRecord(View v) {
+    public void toggleButtonOnClickStart(View v) {
 
         movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
             @Override
@@ -27,7 +27,7 @@ public class VideoRecorde2Activity extends AppCompatActivity {
         });
     }
 
-    public void stopRecord(View v) {
+    public void toggleButtonOnClickStop(View v) {
         movieRecorderView.stopRecord();
     }
 }
