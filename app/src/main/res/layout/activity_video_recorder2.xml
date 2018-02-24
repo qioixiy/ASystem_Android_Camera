@@ -7,44 +7,48 @@
     android:orientation="vertical">
 
     <com.xyz.drivingRecorder.MovieRecorderView
-        android:id="@+id/camera"
+        android:id="@+id/camera2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true" >
     </com.xyz.drivingRecorder.MovieRecorderView>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:layout_alignBottom="@+id/camera"
-        >
+        android:layout_alignBottom="@+id/camera2"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/button_capture_start"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="toggleButtonOnClickStart"
-            android:text="@string/start" />
-        <Button
-            android:id="@+id/button_capture_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:onClick="toggleButtonOnClickStop"
-            android:text="@string/stop" />
+            android:orientation="horizontal">
 
-        <com.xyz.vendor.widget.UpdateTimeTextView
-            android:id="@+id/info_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            android:clickable="true"
-            android:foreground="?android:attr/selectableItemBackground" />
+            <Button
+                android:id="@+id/button_capture_start2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start" />
 
+            <Button
+                android:id="@+id/button_capture_stop2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/stop" />
+
+            <com.xyz.vendor.widget.UpdateTimeTextView
+                android:id="@+id/info_time2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>

@@ -35,6 +35,22 @@ import me.weyye.hipermission.PermissionCallback;
 public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
+    public interface AcitivityLifeCycle {
+        void onResume();
+
+        void onPause();
+    }
+
+    public interface VideoRecorderMethod {
+        void start();
+
+        void stop();
+    }
+
+    public interface VideoRecorderDone {
+        void done();
+    }
+
     private CameraView cameraView;
     private File mVideoFile = null;
     private boolean mCanBeStart = true;
@@ -45,6 +61,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
     private AcitivityLifeCycle mAcitivityLifeCycle;
     private VideoRecorderMethod mVideoRecorderMethod;
+    private VideoRecorderDone mVideoRecorderDone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +69,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         initSys();
 
-        initView();
-        //initView2();
+        //initView();
+        initView2();
     }
 
     private void initSys() {
@@ -104,31 +121,144 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 cameraView.stop();
             }
         };
+
+        class VideoRecorderMethod1 implements VideoRecorderMethod {
+
+            private Context mContext;
+
+            public VideoRecorderMethod1(Context context) {
+                mContext = context;
+            }
+
+            @Override
+            public void start() {
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String path = getStoragePathBase() + "video_" + timeStamp + ".mp4";
+
+                mVideoFile = new File(path);
+                cameraView.captureVideo(mVideoFile);
+
+                Button btn_start = (Button) findViewById(R.id.button_capture_start);
+                Button btn_stop = (Button) findViewById(R.id.button_capture_stop);
+                btn_start.setEnabled(false);
+                btn_stop.setEnabled(true);
+
+                mDelayHandler.postDelayed(new TimeoutRunnable(mContext), SettingDataModel.getVideoFileTimeSize() * 1000);
+            }
+
+            @Override
+            public void stop() {
+                cameraView.stopVideo();
+
+                Button btn_start = (Button) findViewById(R.id.button_capture_start);
+                Button btn_stop = (Button) findViewById(R.id.button_capture_stop);
+                btn_start.setEnabled(true);
+                btn_stop.setEnabled(false);
+            }
+        }
+
+        mVideoRecorderMethod = new VideoRecorderMethod1(this);
+
+        mVideoRecorderDone = new VideoRecorderDone() {
+            @Override
+            public void done() {
+                File tFile = mVideoFile;
+                mVideoFile = null;
+                notifyMediaFile(tFile);
+            }
+        };
     }
 
     private void initView2() {
 
         setContentView(R.layout.activity_video_recorder2);
 
-        movieRecorderView = (MovieRecorderView)findViewById(R.id.camera);
-    }
+        movieRecorderView = (MovieRecorderView) findViewById(R.id.camera2);
 
-    public void startRecord(View v) {
-
-        movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
+        Button capture_start = findViewById(R.id.button_capture_start2);
+        capture_start.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRecordFinish() {
-                Log.e(TAG, "done");
+            public void onClick(View v) {
+                toggleButtonOnClickStart(v);
             }
         });
+        Button capture_stop = findViewById(R.id.button_capture_stop2);
+        capture_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleButtonOnClickStop(v);
+            }
+        });
+
+        mVideoRecorderMethod = new VideoRecorderMethod() {
+            @Override
+            public void start() {
+                movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
+                    @Override
+                    public void onRecordFinish() {
+                        Log.e(TAG, "done");
+                        mVideoRecorderDone.done();
+                    }
+                });
+                Button btn_start = (Button) findViewById(R.id.button_capture_start2);
+                Button btn_stop = (Button) findViewById(R.id.button_capture_stop2);
+                btn_start.setEnabled(false);
+                btn_stop.setEnabled(true);
+
+                movieRecorderView.setRecordMaxTime(SettingDataModel.getVideoFileTimeSize());
+            }
+
+            @Override
+            public void stop() {
+                Button btn_start = (Button) findViewById(R.id.button_capture_start2);
+                Button btn_stop = (Button) findViewById(R.id.button_capture_stop2);
+                btn_start.setEnabled(true);
+                btn_stop.setEnabled(false);
+                movieRecorderView.stopRecord();
+            }
+        };
+
+        movieRecorderView.setRecordMaxTime(SettingDataModel.getVideoFileTimeSize());
+
+        mVideoRecorderDone = new VideoRecorderDone() {
+            @Override
+            public void done() {
+                File tFile = movieRecorderView.getRecordFile();
+                notifyMediaFile(tFile);
+            }
+        };
     }
 
-    public void stopRecord(View v) {
-        movieRecorderView.stopRecord();
+    private void notifyMediaFile(File file) {
+        try {
+            // 其次把文件插入到系统图库
+            MediaStore.Images.Media.insertImage(getContentResolver(),
+                    file.getAbsolutePath(), file.getName(), null);
+            showToast("保存成功" + file);
+
+            VideoDataModel videoDataModel = new VideoDataModel();
+            videoDataModel.setContext(VideoRecordeActivity.this);
+            VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
+
+            String name = file.getName();
+            String path = file.getAbsolutePath();
+            videoMetaData.setName(name);
+            videoMetaData.setPath(path);
+            videoDataModel.insertVideoMetaData(videoMetaData);
+
+            Log.i(TAG, path);
+
+            // 最后通知图库更新
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.fromFile(file)));
+        } catch (FileNotFoundException e) {
+            showToast("保存失败");
+            e.printStackTrace();
+        }
     }
 
     private void initCameraView() {
-        cameraView = (CameraView)findViewById(R.id.camera);
+        cameraView = (CameraView) findViewById(R.id.camera);
 
         cameraView.addCameraKitListener(new CameraKitEventListener() {
             @Override
@@ -151,44 +281,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
             public void onVideo(CameraKitVideo cameraKitVideo) {
                 Log.i(TAG, cameraKitVideo.getVideoFile().getName());
 
-                // 其次把文件插入到系统图库
-                try {
-                    MediaStore.Images.Media.insertImage(getContentResolver(),
-                            mVideoFile.getAbsolutePath(), mVideoFile.getName(), null);
-                    showToast("保存成功" + mVideoFile);
-
-                    VideoDataModel videoDataModel = new VideoDataModel();
-                    videoDataModel.setContext(VideoRecordeActivity.this);
-                    VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
-
-                    String name = mVideoFile.getName();
-                    String path = mVideoFile.getAbsolutePath();
-                    videoMetaData.setName(name);
-                    videoMetaData.setPath(path);
-                    videoDataModel.insertVideoMetaData(videoMetaData);
-
-                    Log.i(TAG, path);
-                } catch (FileNotFoundException e) {
-                    showToast("保存失败");
-                    e.printStackTrace();
-                }
-                // 最后通知图库更新
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                        Uri.fromFile(mVideoFile)));
-
-                mVideoFile = null;
+                mVideoRecorderDone.done();
             }
         });
-    }
-
-    public interface AcitivityLifeCycle {
-        void onResume();
-        void onPause();
-    }
-
-    public interface VideoRecorderMethod {
-        void start();
-        void stop();
     }
 
     @Override
@@ -208,21 +303,13 @@ public class VideoRecordeActivity extends AppCompatActivity {
     }
 
     private void updateSelect() {
-
-        if (!mCanBeStart) {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String path = getStoragePathBase() + "video_" + timeStamp + ".mp4";
-
-            mVideoFile = new File(path);
-            cameraView.captureVideo(mVideoFile);
-        } else {
-            cameraView.stopVideo();
+        if (mVideoRecorderMethod != null) {
+            if (!mCanBeStart) {
+                mVideoRecorderMethod.start();
+            } else {
+                mVideoRecorderMethod.stop();
+            }
         }
-
-        Button btn_start = (Button)findViewById(R.id.button_capture_start);
-        Button btn_stop = (Button)findViewById(R.id.button_capture_stop);
-        btn_start.setEnabled(mCanBeStart);
-        btn_stop.setEnabled(!mCanBeStart);
     }
 
     public static String getStoragePathBase() {
@@ -244,8 +331,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
         mCanBeStart = false;
 
         updateSelect();
-
-        mDelayHandler.postDelayed(new TimeoutRunnable(this), SettingDataModel.getVideoFileTimeSize()*1000);
     }
 
     private boolean checkStorageHaveSpace() {
@@ -297,7 +382,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 });
     }
 
-    public  void saveImageToGallery(Context context, Bitmap bmp) {
+    public void saveImageToGallery(Context context, Bitmap bmp) {
         // 首先保存图片
         File appDir = new File(Environment.getExternalStorageDirectory(), "Boohee");
         if (!appDir.exists()) {
@@ -330,6 +415,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private class TriggerRunnable implements Runnable {
 
         private Context context;
+
         public TriggerRunnable(Context context) {
             this.context = context;
         }
@@ -343,6 +429,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private class TimeoutRunnable implements Runnable {
 
         private Context context;
+
         public TimeoutRunnable(Context context) {
             this.context = context;
         }

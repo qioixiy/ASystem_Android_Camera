@@ -3,7 +3,6 @@ package com.xyz.drivingRecorder;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.media.MediaRecorder;
@@ -25,8 +24,10 @@ import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +38,7 @@ import java.util.TimerTask;
  * http://blog.csdn.net/wood12943907/article/details/52096959
  */
 public class MovieRecorderView extends LinearLayout implements OnErrorListener {
-    private static final String LOG_TAG = "MovieRecorderView";
+    private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
     private Context context;
 
@@ -125,10 +126,10 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
             freeCameraResource();
         }
         try {
-            if (checkCameraFacing(Camera.CameraInfo.CAMERA_FACING_FRONT)) {
-                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);//TODO 默认打开前置摄像头
-            } else if (checkCameraFacing(Camera.CameraInfo.CAMERA_FACING_BACK)) {
-                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+            if (checkCameraFacing(Camera.CameraInfo.CAMERA_FACING_BACK)) {
+                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);//TODO 默认打开后置摄像头
+            } else if (checkCameraFacing(Camera.CameraInfo.CAMERA_FACING_FRONT)) {
+                camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,7 +175,7 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
             for (Camera.Size size : supportedPictureSizes) {
                 sizePicture = (size.height * size.width) > sizePicture ? size.height * size.width : sizePicture;
             }
-//            LogUtil.e(LOG_TAG,"手机支持的最大像素supportedPictureSizes===="+sizePicture);
+            Log.e(TAG,"手机支持的最大像素supportedPictureSizes===="+sizePicture);
             setPreviewSize(params);
             camera.setParameters(params);
         }
@@ -210,24 +211,24 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         Camera.Size best = null;
         for (Camera.Size s : previewSizes) {
             tmp = Math.abs(((float) s.height / (float) s.width) - ratio);
-            Log.e(LOG_TAG, "setPreviewSize: width:" + s.width + "...height:" + s.height);
-//            LogUtil.e(LOG_TAG,"tmp:" + tmp);
+            Log.e(TAG, "setPreviewSize: width:" + s.width + "...height:" + s.height);
+            Log.e(TAG,"tmp:" + tmp);
             if (tmp < minDiff) {
                 minDiff = tmp;
                 best = s;
             }
         }
-//        LogUtil.e(LOG_TAG, "BestSize: width:" + best.width + "...height:" + best.height);
+//        LogUtil.e(TAG, "BestSize: width:" + best.width + "...height:" + best.height);
 //        List<int[]> range = params.getSupportedPreviewFpsRange();
 //        int[] fps = range.get(0);
-//        LogUtil.e(LOG_TAG,"min="+fps[0]+",max="+fps[1]);
+//        LogUtil.e(TAG,"min="+fps[0]+",max="+fps[1]);
 //        params.setPreviewFpsRange(3,7);
 
         params.setPreviewSize(best.width, best.height);//预览比率
 
 //        params.setPictureSize(480, 720);//拍照保存比率
 
-        Log.e(LOG_TAG, "setPreviewSize BestSize: width:" + best.width + "...height:" + best.height);
+        Log.e(TAG, "setPreviewSize BestSize: width:" + best.width + "...height:" + best.height);
 
         //TODO 大部分手机支持的预览尺寸和录制尺寸是一样的，也有特例，有些手机获取不到，那就把设置录制尺寸放到设置预览的方法里面
         if (params.getSupportedVideoSizes() == null || params.getSupportedVideoSizes().size() == 0) {
@@ -268,13 +269,13 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         Camera.Size best = null;
         for (Camera.Size s : previewSizes) {
             tmp = Math.abs(((float) s.height / (float) s.width) - ratio);
-            Log.e(LOG_TAG, "setVideoSize: width:" + s.width + "...height:" + s.height);
+            Log.e(TAG, "setVideoSize: width:" + s.width + "...height:" + s.height);
             if (tmp < minDiff) {
                 minDiff = tmp;
                 best = s;
             }
         }
-        Log.e(LOG_TAG, "setVideoSize BestSize: width:" + best.width + "...height:" + best.height);
+        Log.e(TAG, "setVideoSize BestSize: width:" + best.width + "...height:" + best.height);
         //设置录制尺寸
         mWidth = best.width;
         mHeight = best.height;
@@ -307,12 +308,16 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         if (!sampleDir.exists()) {
             sampleDir.mkdirs();
         }
+
         try {
-            //TODO 文件名用的时间戳，可根据需要自己设置，格式也可以选择3gp，在初始化设置里也需要修改
-            recordFile = new File(sampleDir, System.currentTimeMillis() + ".mp4");
-//            recordFile = new File(sampleDir, System.currentTimeMillis() + ".mp4");
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String path = VideoRecordeActivity.getStoragePathBase() + "video_" + timeStamp + ".mp4";
+
+            Log.i(TAG, "path:" + path);
+
+            recordFile = new File(path);
 //            File.createTempFile(AccountInfo.userId, ".mp4", sampleDir);
-//            LogUtil.e(LOG_TAG, recordFile.getAbsolutePath());
+            Log.e(TAG, recordFile.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -334,7 +339,7 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         mediaRecorder.setAudioEncoder(AudioEncoder.AMR_NB);//音频格式
         mediaRecorder.setVideoSize(mWidth, mHeight);//设置分辨率
 //        mediaRecorder.setVideoFrameRate(25);//TODO 设置每秒帧数 这个设置有可能会出问题，有的手机不支持这种帧率就会录制失败，这里使用默认的帧率，当然视频的大小肯定会受影响
-//        LogUtil.e(LOG_TAG,"手机支持的最大像素supportedPictureSizes===="+sizePicture);
+        Log.e(TAG,"手机支持的最大像素supportedPictureSizes===="+sizePicture);
         if (sizePicture < 3000000) {//这里设置可以调整清晰度
             mediaRecorder.setVideoEncodingBitRate(3 * 1024 * 512);
         } else if (sizePicture <= 5000000) {
