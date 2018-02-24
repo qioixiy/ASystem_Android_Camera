@@ -3,6 +3,7 @@ package com.xyz.drivingRecorder;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.media.MediaRecorder;
@@ -15,6 +16,7 @@ import android.media.MediaRecorder.VideoSource;
 import android.os.Build;
 import android.os.Environment;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
@@ -181,6 +183,17 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         }
     }
 
+    private Point getDisplayInfomation() {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        System.out.println("heigth2 : " + dm.heightPixels);
+        System.out.println("width2 : " + dm.widthPixels);
+
+        Point p = new Point();
+        p.set(dm.heightPixels, dm.widthPixels);
+
+        return p;
+    }
+
     /**
      * 根据手机支持的视频分辨率，设置预览尺寸
      *
@@ -205,9 +218,13 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
             }
         });
 
+        Point p = getDisplayInfomation();
+
         float tmp = 0f;
         float minDiff = 100f;
         float ratio = 3.0f / 4.0f;//TODO 高宽比率3:4，且最接近屏幕宽度的分辨率，可以自己选择合适的想要的分辨率
+        ratio = (float)p.x/(float)p.y;
+
         Camera.Size best = null;
         for (Camera.Size s : previewSizes) {
             tmp = Math.abs(((float) s.height / (float) s.width) - ratio);
@@ -343,11 +360,11 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
         if (sizePicture < 3000000) {//这里设置可以调整清晰度
             mediaRecorder.setVideoEncodingBitRate(3 * 1024 * 512);
         } else if (sizePicture <= 5000000) {
-            mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 512);
+            mediaRecorder.setVideoEncodingBitRate(3 * 1024 * 512);
         } else {
-            mediaRecorder.setVideoEncodingBitRate(1 * 1024 * 512);
+            mediaRecorder.setVideoEncodingBitRate(3 * 1024 * 512);
         }
-        mediaRecorder.setOrientationHint(270);//输出旋转90度，保持竖屏录制
+        mediaRecorder.setOrientationHint(90);//输出旋转90度，保持竖屏录制
         mediaRecorder.setVideoEncoder(VideoEncoder.H264);//视频录制格式
         //mediaRecorder.setMaxDuration(Constant.MAXVEDIOTIME * 1000);
         mediaRecorder.setOutputFile(recordFile.getAbsolutePath());
