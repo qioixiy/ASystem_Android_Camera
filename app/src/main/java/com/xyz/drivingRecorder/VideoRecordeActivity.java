@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ import me.weyye.hipermission.PermissionCallback;
 public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
+    private final int MSG_RECORDER_DONE = 0x01;
+
     public interface AcitivityLifeCycle {
         void onResume();
 
@@ -56,6 +59,19 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private boolean mCanBeStart = true;
 
     private Handler mDelayHandler = new Handler();
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what)
+            {
+                case MSG_RECORDER_DONE:
+                    mVideoRecorderDone.done();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     private MovieRecorderView movieRecorderView;
 
@@ -197,7 +213,10 @@ public class VideoRecordeActivity extends AppCompatActivity {
                     @Override
                     public void onRecordFinish() {
                         Log.e(TAG, "done");
-                        mVideoRecorderDone.done();
+
+                        Message msg = new Message();
+                        msg.what = MSG_RECORDER_DONE;
+                        handler.sendMessage(msg);
                     }
                 });
                 Button btn_start = (Button) findViewById(R.id.button_capture_start2);
@@ -215,6 +234,10 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 btn_start.setEnabled(true);
                 btn_stop.setEnabled(false);
                 movieRecorderView.stopRecord();
+
+                Message msg = new Message();
+                msg.what = MSG_RECORDER_DONE;
+                handler.sendMessage(msg);
             }
         };
 
@@ -223,6 +246,11 @@ public class VideoRecordeActivity extends AppCompatActivity {
         mVideoRecorderDone = new VideoRecorderDone() {
             @Override
             public void done() {
+                Button btn_start = (Button) findViewById(R.id.button_capture_start2);
+                Button btn_stop = (Button) findViewById(R.id.button_capture_stop2);
+                btn_start.setEnabled(true);
+                btn_stop.setEnabled(false);
+
                 File tFile = movieRecorderView.getRecordFile();
                 notifyMediaFile(tFile);
             }

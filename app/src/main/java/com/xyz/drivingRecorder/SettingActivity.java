@@ -9,6 +9,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class SettingActivity extends AppCompatActivity {
     private SeekBar seekBarProgressSensitivity;
     private TextView textViewSensitivity;
@@ -92,7 +94,15 @@ public class SettingActivity extends AppCompatActivity {
                 String path = VideoRecordeActivity.getStoragePathBase();
                 DeleteFileUtil.deleteDirectory(path);
 
-                Toast.makeText(SettingActivity.this, "清空", Toast.LENGTH_SHORT).show();
+                VideoDataModel videoDataModel = new VideoDataModel();
+                videoDataModel.setContext(SettingActivity.this);
+                VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
+                ArrayList<VideoDataModel.VideoMetaData> list = videoDataModel.queryAll();
+                for (VideoDataModel.VideoMetaData data : list) {
+                    videoDataModel.deleteVideoMetaData(data.getId());
+                }
+
+                Toast.makeText(SettingActivity.this, "清空完毕", Toast.LENGTH_SHORT).show();
             }
         });
     }
