@@ -41,6 +41,13 @@ public class MainActivity extends Activity {
 
         initListView();
         initSensorInfo();
+
+        initDB();
+    }
+
+    private void initDB()
+    {
+        SettingDataModel.instance().setContext(this);
     }
 
     @Override
@@ -165,7 +172,7 @@ public class MainActivity extends Activity {
             int sensorType = event.sensor.getType();
             float[] values = event.values;
             if (sensorType == Sensor.TYPE_ACCELEROMETER){
-                int limit = SettingDataModel.getCollisionDetectionSensitivity();
+                int limit = SettingDataModel.instance().getCollisionDetectionSensitivity();
                 if (Math.abs(values[0]) > limit || Math.abs(values[1]) > limit || Math.abs(values[2]) > limit){
                     mVibrator.vibrate(100);
                     //进行手机晃动的监听  ，可以在这里实现 intent 等效果

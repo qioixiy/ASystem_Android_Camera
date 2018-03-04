@@ -159,7 +159,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 btn_start.setEnabled(false);
                 btn_stop.setEnabled(true);
 
-                mDelayHandler.postDelayed(new TimeoutRunnable(mContext), SettingDataModel.getVideoFileTimeSize() * 1000);
+                mDelayHandler.postDelayed(new TimeoutRunnable(mContext), SettingDataModel.instance().getVideoFileTimeSize() * 1000);
             }
 
             @Override
@@ -224,7 +224,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 btn_start.setEnabled(false);
                 btn_stop.setEnabled(true);
 
-                movieRecorderView.setRecordMaxTime(SettingDataModel.getVideoFileTimeSize());
+                movieRecorderView.setRecordMaxTime(SettingDataModel.instance().getVideoFileTimeSize());
             }
 
             @Override
@@ -241,7 +241,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
             }
         };
 
-        movieRecorderView.setRecordMaxTime(SettingDataModel.getVideoFileTimeSize());
+        movieRecorderView.setRecordMaxTime(SettingDataModel.instance().getVideoFileTimeSize());
 
         mVideoRecorderDone = new VideoRecorderDone() {
             @Override
@@ -363,7 +363,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
     private boolean checkStorageHaveSpace() {
         double size = FileSizeUtil.getFileOrFilesSize(getStoragePathBase(), FileSizeUtil.SIZETYPE_B);
-        int limit = SettingDataModel.getVideoStorageSize() * 1000 * 1000;
+        int limit = SettingDataModel.instance().getVideoStorageSize() * 1000 * 1000;
         if (size > limit) {
             return false;
         }

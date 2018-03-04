@@ -41,13 +41,22 @@ public class SettingActivity extends AppCompatActivity {
         seekBarProgressVideoStorageSize = (SeekBar) findViewById(R.id.progress_storage_size);
         textViewVideoStorageSize = (TextView) findViewById(R.id.text_storage_size);
 
-        textViewSensitivity.setText(Integer.toString(SettingDataModel.getCollisionDetectionSensitivity()));;
+        int collisionDetectionSensitivity = SettingDataModel.instance().getCollisionDetectionSensitivity();
+        seekBarProgressSensitivity.setProgress(collisionDetectionSensitivity);
+        textViewSensitivity.setText(Integer.toString(collisionDetectionSensitivity));
 
         seekBarProgressSensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textViewSensitivity.setText(Integer.toString(progress));
-                SettingDataModel.setCollisionDetectionSensitivity(progress);
+                if (progress >= 10) {
+                    textViewSensitivity.setText(Integer.toString(progress));
+                    SettingDataModel.instance().setCollisionDetectionSensitivity(progress);
+                } else {
+                    if (seekBar.getProgress() != 10) {
+                        Toast.makeText(SettingActivity.this, "最小10", Toast.LENGTH_SHORT).show();
+                        seekBar.setProgress(10);
+                    }
+                }
             }
 
             @Override
@@ -57,12 +66,14 @@ public class SettingActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        textViewVideoSize.setText(Integer.toString(SettingDataModel.getVideoFileTimeSize()));
+        int videoFileTimeSize = SettingDataModel.instance().getVideoFileTimeSize();
+        seekBarProgressVideoSize.setProgress(videoFileTimeSize);
+        textViewVideoSize.setText(Integer.toString(videoFileTimeSize));
         seekBarProgressVideoSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textViewVideoSize.setText(Integer.toString(progress));
-                SettingDataModel.setVideoFileTimeSize(progress);
+                SettingDataModel.instance().setVideoFileTimeSize(progress);
             }
 
             @Override
@@ -72,12 +83,14 @@ public class SettingActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        textViewVideoStorageSize.setText(Integer.toString(SettingDataModel.getVideoStorageSize()));
+        int videoStorageSize = SettingDataModel.instance().getVideoStorageSize();
+        seekBarProgressVideoStorageSize.setProgress(videoStorageSize);
+        textViewVideoStorageSize.setText(Integer.toString(videoStorageSize));
         seekBarProgressVideoStorageSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textViewVideoStorageSize.setText(Integer.toString(progress));
-                SettingDataModel.setVideoStorageSize(progress);
+                SettingDataModel.instance().setVideoStorageSize(progress);
             }
 
             @Override
