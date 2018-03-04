@@ -89,6 +89,12 @@ public class VideoRecordeActivity extends AppCompatActivity {
         initView2();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        toggleButtonOnClickStop(null);
+    }
+
     private void initSys() {
         String data = getIntent().getStringExtra("data");
         if (data.equals("active_trigger")) {

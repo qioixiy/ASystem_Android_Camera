@@ -27,6 +27,8 @@ public class MainActivity extends Activity {
     private ListView mListView;
     private BaseAdapter adapter;
 
+    private int recorderState = 0;
+
     private List<FunctionList.FunctionItem> mFunctionList;//实体类
 
     private SensorManager mSensorManager;
@@ -52,6 +54,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
+        recorderState = 0;
+
         super.onResume();
         // 注册传感器监听函数
         mSensorManager.registerListener(mSensorListener, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
@@ -62,6 +66,12 @@ public class MainActivity extends Activity {
         super.onPause();
         // 注销监听函数
         mSensorManager.unregisterListener(mSensorListener);
+    }
+
+    @Override
+    protected void onActivityResult( int requestCode, int resultCode, Intent data )
+    {
+        recorderState = 0;
     }
 
     private void initSensorInfo() {
@@ -130,7 +140,7 @@ public class MainActivity extends Activity {
                         startActivity(it);
                         break;
                     case 1:
-                        startRecorderMainActivity("active_normal");
+                        requestRecorder("active_normal");
                         break;
                     case 2:
                         startSettingActivity();
@@ -142,7 +152,17 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void requestRecorder(String type) {
+        if (recorderState == 0) {
+            recorderState = 1;
+            startRecorderMainActivity(type);
+        } else {
+            Log.e(TAG, "recorder runnging");
+        }
+    }
+
     private void startRecorderMainActivity(String str) {
+        Log.i(TAG, "startRecorderMainActivity");
 
         Intent it = new Intent(MainActivity.this, VideoRecordeActivity.class); //
         Bundle b = new Bundle();
@@ -177,7 +197,7 @@ public class MainActivity extends Activity {
                     mVibrator.vibrate(100);
                     //进行手机晃动的监听  ，可以在这里实现 intent 等效果
 
-                    startRecorderMainActivity("active_trigger");
+                    requestRecorder("active_trigger");
                 }
             }
         }
