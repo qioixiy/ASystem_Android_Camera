@@ -119,7 +119,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
         mySensorListener.registerHandler(new MySensorListener.IHandler() {
             @Override
             public void handle(String data) {
-                Log.e(TAG, data);
+                Log.i(TAG, data);
+
+                mVideoRecorderMethod.stop();
             }
         });
         mSensorWatcher.registerSensorEventListener(mySensorListener);
@@ -250,8 +252,16 @@ public class VideoRecordeActivity extends AppCompatActivity {
         });
 
         mVideoRecorderMethod = new VideoRecorderMethod() {
+            private boolean mRunning = false;
+
             @Override
             public void start() {
+                if (mRunning) {
+                    Log.e(TAG, "running");
+                    return;
+                }
+
+                mRunning = true;
                 movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
                     @Override
                     public void onRecordFinish() {
@@ -272,6 +282,11 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
             @Override
             public void stop() {
+                if (!mRunning) {
+                    Log.e(TAG, "not running");
+                    return;
+                }
+                mRunning = false;
 
                 Button btn_start = (Button) findViewById(R.id.button_capture_start2);
                 Button btn_stop = (Button) findViewById(R.id.button_capture_stop2);
