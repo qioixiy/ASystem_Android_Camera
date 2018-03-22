@@ -153,6 +153,8 @@ public class MainActivity extends Activity {
     }
 
     private void requestRecorder(String type) {
+        Log.i(TAG, "requestRecorder");
+
         if (recorderState == 0) {
             recorderState = 1;
             startRecorderMainActivity(type);
@@ -178,27 +180,39 @@ public class MainActivity extends Activity {
         startActivity(it);
     }
 
+    float [] values = new float[3];
     class MySensorListener implements SensorEventListener {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
             // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
-            //Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+            Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]
+                        + ",prev: " + values[0] + ", " + values[1] + ", " + values[2]);
 
             TextView mSensorInfoA = (TextView) findViewById(R.id.main_textview_sensor_info_a);
-
-            //mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
+            mSensorInfoA.setText("" + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);
 
             int sensorType = event.sensor.getType();
-            float[] values = event.values;
             if (sensorType == Sensor.TYPE_ACCELEROMETER){
+
                 int limit = SettingDataModel.instance().getCollisionDetectionSensitivity();
-                if (Math.abs(values[0]) > limit || Math.abs(values[1]) > limit || Math.abs(values[2]) > limit){
-                    mVibrator.vibrate(100);
+
+                float delta0 = Math.abs(event.values[0] - values[0]);
+                float delta1 = Math.abs(event.values[1] - values[1]);
+                float delta2 = Math.abs(event.values[2] - values[2]);
+
+                if (delta0 > limit || delta1 > limit || delta2 > limit){
+                    mVibrator.vibrate(300);
                     //进行手机晃动的监听  ，可以在这里实现 intent 等效果
 
                     requestRecorder("active_trigger");
                 }
+
+                values[0] = event.values[0];
+                values[1] = event.values[1];
+                values[2] = event.values[2];
+
+                Log.e(TAG, "" + delta0 + " " + delta1 + " " + delta2);
             }
         }
 

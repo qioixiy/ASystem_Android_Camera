@@ -96,11 +96,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
     }
 
     private void initSys() {
-        String data = getIntent().getStringExtra("data");
-        if (data.equals("active_trigger")) {
-            mDelayHandler.postDelayed(new TriggerRunnable(this), 200);
-        }
-
         String dir = getStoragePathBase();
         //新建一个File，传入文件夹目录
         File file = new File(dir);
@@ -110,6 +105,12 @@ public class VideoRecordeActivity extends AppCompatActivity {
         }
 
         checkPermission(this);
+
+        String data = getIntent().getStringExtra("data");
+        if (data.equals("active_trigger")) {
+            mDelayHandler.postDelayed(new TriggerRunnable(this), 1500);
+        }
+
     }
 
     private void initView() {
@@ -235,6 +236,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
             @Override
             public void stop() {
+
                 Button btn_start = (Button) findViewById(R.id.button_capture_start2);
                 Button btn_stop = (Button) findViewById(R.id.button_capture_stop2);
                 btn_start.setEnabled(true);
@@ -264,31 +266,35 @@ public class VideoRecordeActivity extends AppCompatActivity {
     }
 
     private void notifyMediaFile(File file) {
+        mCanBeStart = true;
+
         try {
             // 其次把文件插入到系统图库
             MediaStore.Images.Media.insertImage(getContentResolver(),
                     file.getAbsolutePath(), file.getName(), null);
-            showToast("保存成功" + file);
-
-            VideoDataModel videoDataModel = new VideoDataModel();
-            videoDataModel.setContext(VideoRecordeActivity.this);
-            VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
-
-            String name = file.getName();
-            String path = file.getAbsolutePath();
-            videoMetaData.setName(name);
-            videoMetaData.setPath(path);
-            videoDataModel.insertVideoMetaData(videoMetaData);
-
-            Log.i(TAG, path);
-
-            // 最后通知图库更新
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.fromFile(file)));
         } catch (FileNotFoundException e) {
-            showToast("保存失败");
+            showToast("保存失败" + e.toString());
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        showToast("保存成功" + file);
+
+        VideoDataModel videoDataModel = new VideoDataModel();
+        videoDataModel.setContext(VideoRecordeActivity.this);
+        VideoDataModel.VideoMetaData videoMetaData = new VideoDataModel.VideoMetaData();
+
+        String name = file.getName();
+        String path = file.getAbsolutePath();
+        videoMetaData.setName(name);
+        videoMetaData.setPath(path);
+        videoDataModel.insertVideoMetaData(videoMetaData);
+
+        Log.i(TAG, path);
+
+        // 最后通知图库更新
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.fromFile(file)));
     }
 
     private void initCameraView() {

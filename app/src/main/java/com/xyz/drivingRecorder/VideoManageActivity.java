@@ -61,12 +61,17 @@ public class VideoManageActivity extends AppCompatActivity {
         listViewSlideAdapter.setOnInnerItemOnClickListener(new ListViewSlideAdapter.InnerItemOnClickListener() {
             @Override
             public void onClick(int position) {
-                Uri uri = Uri.parse(videoMetaDataList.get(position).getPath());
-                //调用系统自带的播放器
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Uri uri = Uri.parse("file://" + videoMetaDataList.get(position).getPath());
                 Log.v(TAG, uri.toString());
-                intent.setDataAndType(uri, "video/mp4");
-                startActivity(intent);
+
+                try {
+                    //调用系统自带的播放器
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(uri, "video/*");
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(VideoManageActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

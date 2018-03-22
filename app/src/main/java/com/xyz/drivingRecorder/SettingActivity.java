@@ -48,13 +48,15 @@ public class SettingActivity extends AppCompatActivity {
         seekBarProgressSensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress >= 10) {
+                int min = 5;
+
+                if (progress >= min) {
                     textViewSensitivity.setText(Integer.toString(progress));
                     SettingDataModel.instance().setCollisionDetectionSensitivity(progress);
                 } else {
-                    if (seekBar.getProgress() != 10) {
-                        Toast.makeText(SettingActivity.this, "最小10", Toast.LENGTH_SHORT).show();
-                        seekBar.setProgress(10);
+                    if (seekBar.getProgress() != min) {
+                        Toast.makeText(SettingActivity.this, "最小" + min, Toast.LENGTH_SHORT).show();
+                        seekBar.setProgress(min);
                     }
                 }
             }

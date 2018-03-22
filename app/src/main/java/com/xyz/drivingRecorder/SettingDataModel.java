@@ -24,7 +24,7 @@ public class SettingDataModel {
         loadDataFromeDB();
     }
 
-    private final int CollisionDetectionSensitivity = 20;
+    private final int CollisionDetectionSensitivity = 5;
     private final int VideoFileTimeSize = 60;
     private final int VideoStorageSize = 100;
 
