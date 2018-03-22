@@ -36,17 +36,17 @@ import me.weyye.hipermission.PermissionCallback;
 public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
+    private SensorWatcher mSensorWatcher;
+
     private final int MSG_RECORDER_DONE = 0x01;
 
     public interface AcitivityLifeCycle {
         void onResume();
-
         void onPause();
     }
 
     public interface VideoRecorderMethod {
         void start();
-
         void stop();
     }
 
@@ -87,6 +87,42 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         //initView();
         initView2();
+
+        initSensorInfo();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAcitivityLifeCycle != null) {
+            mAcitivityLifeCycle.onResume();
+        }
+
+        mSensorWatcher.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (mAcitivityLifeCycle != null) {
+            mAcitivityLifeCycle.onPause();
+        }
+        super.onPause();
+
+        mSensorWatcher.onPause();
+    }
+
+    private void initSensorInfo() {
+
+        mSensorWatcher = new SensorWatcher(this);
+
+        MySensorListener mySensorListener = new MySensorListener(this);
+        mySensorListener.registerHandler(new MySensorListener.IHandler() {
+            @Override
+            public void handle(String data) {
+                Log.e(TAG, data);
+            }
+        });
+        mSensorWatcher.registerSensorEventListener(mySensorListener);
     }
 
     @Override
@@ -324,22 +360,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 mVideoRecorderDone.done();
             }
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (mAcitivityLifeCycle != null) {
-            mAcitivityLifeCycle.onResume();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        if (mAcitivityLifeCycle != null) {
-            mAcitivityLifeCycle.onPause();
-        }
-        super.onPause();
     }
 
     private void updateSelect() {
