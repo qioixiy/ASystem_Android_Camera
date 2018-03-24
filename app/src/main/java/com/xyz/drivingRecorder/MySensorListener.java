@@ -36,8 +36,8 @@ class MySensorListener implements SensorEventListener {
 
         try {
             // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
-            Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]
-                    + ",prev: " + values[0] + ", " + values[1] + ", " + values[2]);
+            //Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]
+            //        + ",prev: " + values[0] + ", " + values[1] + ", " + values[2]);
 
             TextView mSensorInfoA = (TextView) mActivity.findViewById(R.id.main_textview_sensor_info_a);
             if (mSensorInfoA != null) {
@@ -66,7 +66,7 @@ class MySensorListener implements SensorEventListener {
                 values[1] = event.values[1];
                 values[2] = event.values[2];
 
-                Log.e(TAG, "" + delta0 + " " + delta1 + " " + delta2);
+                //Log.e(TAG, "" + delta0 + " " + delta1 + " " + delta2);
             }
         } catch (Exception e) {
             e.printStackTrace();
