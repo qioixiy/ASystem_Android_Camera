@@ -66,16 +66,23 @@ public class MainActivity extends Activity {
 
     private void initSensorInfo() {
 
-        sensorWatcher = new SensorWatcher(this);
+        boolean selector = false;
+        
+        if (selector) {
+            Intent intentOne = new Intent(this, DeviceSensorService.class);
+            startService(intentOne);
+        } else {
+            sensorWatcher = new SensorWatcher(this);
 
-        MySensorListener mySensorListener = new MySensorListener(this);
-        mySensorListener.registerHandler(new MySensorListener.IHandler() {
-            @Override
-            public void handle(String data) {
-                requestRecorder("active_trigger");
-            }
-        });
-        sensorWatcher.registerSensorEventListener(mySensorListener);
+            MySensorListener mySensorListener = new MySensorListener(this);
+            mySensorListener.registerHandler(new MySensorListener.IHandler() {
+                @Override
+                public void handle(String data) {
+                    requestRecorder("active_trigger");
+                }
+            });
+            sensorWatcher.registerSensorEventListener(mySensorListener);
+        }
     }
 
     private void initListView() {

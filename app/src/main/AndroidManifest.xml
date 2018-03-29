@@ -45,6 +45,8 @@
             android:label="@string/app_setting"
             android:screenOrientation="portrait" />
         <activity android:name=".VideoRecorde2Activity" />
+
+        <service android:name=".DeviceSensorService" />
     </application>
 
 </manifest>
