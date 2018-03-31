@@ -33,6 +33,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
+
         initListView();
         initSensorInfo();
 
@@ -46,6 +48,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onResume() {
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
         recorderState = 0;
 
         super.onResume();
@@ -53,12 +57,15 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_IDEL);
         super.onPause();
     }
 
     @Override
     protected void onActivityResult( int requestCode, int resultCode, Intent data )
     {
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
         recorderState = 0;
     }
 
@@ -66,6 +73,8 @@ public class MainActivity extends Activity {
 
         Intent intentOne = new Intent(this, DeviceSensorService.class);
         startService(intentOne);
+
+
     }
 
     private void initListView() {

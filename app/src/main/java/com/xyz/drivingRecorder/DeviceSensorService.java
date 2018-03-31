@@ -11,6 +11,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
@@ -71,6 +72,28 @@ public class DeviceSensorService extends Service {
 //        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 //        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, DeviceSensorService.class.getName());
 //        mWakeLock.acquire();
+
+        registerHandler(new IHandler() {
+            @Override
+            public void handle(String str) {
+
+                if (StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_IDEL)) {
+
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    Bundle b = new Bundle();
+                    b.putString("data", str);  //string
+                    b.putSerializable("data", str);
+                    intent.putExtra("data", str);
+                    intent.putExtras(b);
+
+                    getApplication().startActivity(intent);
+                }
+
+                StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
+            }
+        });
     }
 
     @Override
