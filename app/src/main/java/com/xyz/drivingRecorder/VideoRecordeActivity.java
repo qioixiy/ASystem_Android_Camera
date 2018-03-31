@@ -95,10 +95,15 @@ public class VideoRecordeActivity extends AppCompatActivity {
         if (mAcitivityLifeCycle != null) {
             mAcitivityLifeCycle.onResume();
         }
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW);
     }
 
     @Override
     protected void onPause() {
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE);
+
         if (mAcitivityLifeCycle != null) {
             mAcitivityLifeCycle.onPause();
         }

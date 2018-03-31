@@ -77,9 +77,12 @@ public class DeviceSensorService extends Service {
             @Override
             public void handle(String str) {
 
-                if (StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_IDEL)) {
+                if (StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_IDEL)
+                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_HIDE)
+                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW)
+                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE)) {
 
-                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    Intent intent = new Intent(getBaseContext(), VideoRecordeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                     Bundle b = new Bundle();
@@ -89,9 +92,9 @@ public class DeviceSensorService extends Service {
                     intent.putExtras(b);
 
                     getApplication().startActivity(intent);
+                } else {
+                    Log.i(TAG, "SystemStatus:" + StaticValue.getSystemStatus());
                 }
-
-                StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
             }
         });
     }

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private String TAG = "MainActivity";
+    private static String TAG = "MainActivity";
 
     private ListView mListView;
     private BaseAdapter adapter;
@@ -32,8 +32,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
 
         initListView();
         initSensorInfo();
@@ -49,7 +47,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
 
-        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW);
         recorderState = 0;
 
         super.onResume();
@@ -65,7 +63,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult( int requestCode, int resultCode, Intent data )
     {
-        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY);
         recorderState = 0;
     }
 

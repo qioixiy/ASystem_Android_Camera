@@ -7,8 +7,10 @@ public class StaticValue {
     private static final String TAG = "StaticValue";
 
     public static final String SYSTEM_STATUS_IDEL = "SYSTEM_STATUS_IDEL";
-    public static final String SYSTEM_STATUS_MAIN_ACTIVITY = "SYSTEM_STATUS_MAIN_ACTIVITY";
-    public static final String SYSTEM_STATUS_CAPTURE_ACTIVITY = "SYSTEM_STATUS_CAPTURE_ACTIVITY";
+    public static final String SYSTEM_STATUS_MAIN_ACTIVITY_HIDE = "SYSTEM_STATUS_MAIN_ACTIVITY_HIDE";
+    public static final String SYSTEM_STATUS_MAIN_ACTIVITY_SHOW = "SYSTEM_STATUS_MAIN_ACTIVITY_SHOW";
+    public static final String SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE = "SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE";
+    public static final String SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW = "SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW";
     public static final String SYSTEM_STATUS_CAPTURE_RUNNING = "SYSTEM_STATUS_CAPTURE_RUNNING";
 
     private static String mSystemStatus = SYSTEM_STATUS_IDEL;
