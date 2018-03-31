@@ -23,6 +23,16 @@ public class DeviceSensorService extends Service {
     SensorManager sm;
     WakeLock m_wklk;
 
+    private IHandler mHandler;
+
+    public interface IHandler {
+        void handle(String data);
+    }
+
+    public void registerHandler(IHandler handler) {
+        mHandler = handler;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -96,9 +106,11 @@ public class DeviceSensorService extends Service {
      */
     private SensorEventListener mySensorListener = new SensorEventListener() {
 
+        private boolean firstTime = true;
+        private float[] values = new float[3];
         private static final String TAG = "SensorEventListener";
 
-        public void onSensorChanged(SensorEvent sensorEvent) {
+        public void onSensorChanged0(SensorEvent sensorEvent) {
             synchronized (this) {
                 int type = sensorEvent.sensor.getType();
 
@@ -145,6 +157,45 @@ public class DeviceSensorService extends Service {
                 }
             }
         }
+
+        public void onSensorChanged(SensorEvent event) {
+
+            try {
+                // 读取加速度传感器数值，values数组0,1,2分别对应x,y,z轴的加速度
+                //Log.i(TAG, "onSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]
+                //        + ",prev: " + values[0] + ", " + values[1] + ", " + values[2]);
+
+                int sensorType = event.sensor.getType();
+                if (sensorType == Sensor.TYPE_ACCELEROMETER) {
+
+                    int limit = SettingDataModel.instance().getCollisionDetectionSensitivity();
+
+                    float delta0 = Math.abs(event.values[0] - values[0]);
+                    float delta1 = Math.abs(event.values[1] - values[1]);
+                    float delta2 = Math.abs(event.values[2] - values[2]);
+
+                    values[0] = event.values[0];
+                    values[1] = event.values[1];
+                    values[2] = event.values[2];
+                    if (firstTime) {
+                        firstTime = false;
+                        return;
+                    }
+
+                    if (delta0 > limit || delta1 > limit || delta2 > limit) {
+
+                        if (mHandler != null) {
+                            mHandler.handle("active_trigger");
+                        }
+                    }
+
+                    //Log.e(TAG, "" + delta0 + " " + delta1 + " " + delta2);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
 
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
             Log.i("sensor", "onAccuracyChanged-----sensor"+ sensor + ",acc:" + accuracy);
