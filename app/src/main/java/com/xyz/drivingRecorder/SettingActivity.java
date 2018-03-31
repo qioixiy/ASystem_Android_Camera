@@ -31,6 +31,21 @@ public class SettingActivity extends AppCompatActivity {
         initView();
     }
 
+    @Override
+    protected void onResume() {
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_SETTING_ACTIVITY_SHOW);
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW);
+        super.onPause();
+    }
+
     private void initView() {
         seekBarProgressSensitivity = (SeekBar) findViewById(R.id.progress_Sensitivity);
         textViewSensitivity = (TextView) findViewById(R.id.text_Sensitivity);
