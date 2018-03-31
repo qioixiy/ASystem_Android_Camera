@@ -1,8 +1,11 @@
 package com.xyz.drivingRecorder;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -188,4 +191,16 @@ public class MainActivity extends Activity {
         startActivity(it);
     }
 
+    private DeviceSensorService deviceSensorService;
+    ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            deviceSensorService = ((DeviceSensorService.DeviceSensorServiceBinder)service).getDeviceSensorService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            ;
+        }
+    };
 }

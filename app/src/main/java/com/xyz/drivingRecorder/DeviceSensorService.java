@@ -3,8 +3,6 @@ package com.xyz.drivingRecorder; /**
  *
  */
 
-import java.text.SimpleDateFormat;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -12,21 +10,26 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
 public class DeviceSensorService extends Service {
     private static final String TAG = "DeviceSensorService";
-    Sensor sensorAcc, sensoGyros, sensoPress;
-    SensorManager sm;
-    WakeLock m_wklk;
-
+    private Sensor sensorAcc, sensoGyros, sensoPress;
+    private SensorManager mSensorManager;
+    private WakeLock mWakeLock;
     private IHandler mHandler;
 
     public interface IHandler {
         void handle(String data);
+    }
+
+    public class DeviceSensorServiceBinder extends Binder {
+        public DeviceSensorService getDeviceSensorService(){
+            return DeviceSensorService.this;
+        }
     }
 
     public void registerHandler(IHandler handler) {
@@ -36,23 +39,20 @@ public class DeviceSensorService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (sm == null) {
-            sm = (SensorManager) getApplicationContext().getSystemService(
-                    Context.SENSOR_SERVICE);
+        if (mSensorManager == null) {
+            mSensorManager = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
         }
-        /*List<Sensor> sensors = sm.getSensorList(Sensor.TYPE_GYROSCOPE);
+        /*List<Sensor> sensors = mSensorManager.getSensorList(Sensor.TYPE_GYROSCOPE);
         if (sensors.size() > 0){
             Sensor sensor = sensors.get(0);
-            sm.registerListener(this,
+            mSensorManager.registerListener(this,
                     sensor, SensorManager.SENSOR_DELAY_NORMAL);
         }*/
 
         // 加速度感应器
-        Sensor sensorAcc = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        // 陀螺仪
-        //Sensor sensoGyros = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        // 压力
-        //Sensor sensoPress = sm.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        Sensor sensorAcc = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor sensoGyros = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);// 陀螺仪
+        Sensor sensoPress = mSensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);// 压力
 
         /*
          * 最常用的一个方法 注册事件
@@ -64,16 +64,13 @@ public class DeviceSensorService extends Service {
          * SENSOR_DELAY_UI,20次左右
          * SENSOR_DELAY_NORMAL,5次左右
          */
-        sm.registerListener(mySensorListener, sensorAcc,
-                SensorManager.SENSOR_DELAY_NORMAL); //以普通采样率注册监听器
-//        sm.registerListener(mySensorListener, sensoGyros,
-//                SensorManager.SENSOR_DELAY_NORMAL);
-//        sm.registerListener(mySensorListener, sensoPress,
-//                SensorManager.SENSOR_DELAY_NORMAL);
+        mSensorManager.registerListener(mySensorListener, sensorAcc, SensorManager.SENSOR_DELAY_NORMAL); //以普通采样率注册监听器
+//        mSensorManager.registerListener(mySensorListener, sensoGyros, SensorManager.SENSOR_DELAY_NORMAL);
+//        mSensorManager.registerListener(mySensorListener, sensoPress, SensorManager.SENSOR_DELAY_NORMAL);
 
 //        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//        m_wklk = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, DeviceSensorService.class.getName());
-//        m_wklk.acquire();
+//        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, DeviceSensorService.class.getName());
+//        mWakeLock.acquire();
     }
 
     @Override
@@ -84,18 +81,17 @@ public class DeviceSensorService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand");
-//        return super.onStartCommand(intent, flags, startId);
-        return Service.START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     public void onDestroy() {
-        if (sm != null) {
-            sm.unregisterListener(mySensorListener);
+        if (mSensorManager != null) {
+            mSensorManager.unregisterListener(mySensorListener);
             mySensorListener = null;
         }
-        if (m_wklk != null) {
-            m_wklk.release();
-            m_wklk = null;
+        if (mWakeLock != null) {
+            mWakeLock.release();
+            mWakeLock = null;
         }
     };
 
@@ -109,54 +105,6 @@ public class DeviceSensorService extends Service {
         private boolean firstTime = true;
         private float[] values = new float[3];
         private static final String TAG = "SensorEventListener";
-
-        public void onSensorChanged0(SensorEvent sensorEvent) {
-            synchronized (this) {
-                int type = sensorEvent.sensor.getType();
-
-                SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss:SSS ");
-                String date = sDateFormat.format(new java.util.Date());
-
-                switch (type) {
-                    case Sensor.TYPE_ACCELEROMETER://加速度
-//                    acc_count++;
-                        float X_lateral = sensorEvent.values[0];
-                        float Y_longitudinal = sensorEvent.values[1];
-                        float Z_vertical = sensorEvent.values[2];
-                        Log.i(TAG,date + ","
-                                + X_lateral + "," + Y_longitudinal + "," + Z_vertical
-                                + ";");
-
-                        Log.i("sensor", "Accelerometer:"+ date + ", "
-                                + X_lateral + "," + Y_longitudinal + "," + Z_vertical
-                                + ";");
-
-                        break;
-                    case Sensor.TYPE_GYROSCOPE://陀螺仪
-                        //                gyro_count++;
-                        float X_laterals = sensorEvent.values[0];
-                        float Y_longitudinals = sensorEvent.values[1];
-                        float Z_verticals = sensorEvent.values[2];
-                        Log.i(TAG, date + ","
-                                + X_laterals + "," + Y_longitudinals + ","
-                                + Z_verticals + ";");
-                        Log.i("sensor", "Gyproscope:"+ date + ", "
-                                + X_laterals + "," + Y_longitudinals + ","
-                                + Z_verticals + ";");
-                        break;
-                    case Sensor.TYPE_PRESSURE://压力
-                        //                pres_count++;
-                        float X_lateralss = sensorEvent.values[0];
-                        Log.i(TAG, date + "," + X_lateralss
-                                + ";");
-                        Log.i("sensor", "Pressure:"+ date + "," + X_lateralss
-                                + ";");
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
 
         public void onSensorChanged(SensorEvent event) {
 
@@ -198,7 +146,7 @@ public class DeviceSensorService extends Service {
 
 
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            Log.i("sensor", "onAccuracyChanged-----sensor"+ sensor + ",acc:" + accuracy);
+            Log.i(TAG, "onAccuracyChanged:"+ sensor + ",acc:" + accuracy);
 
         }
     };
