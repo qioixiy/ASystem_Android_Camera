@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

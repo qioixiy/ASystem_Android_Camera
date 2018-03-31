@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import android.app.Activity;
 import android.content.Context;

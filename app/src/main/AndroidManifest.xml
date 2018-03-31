@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.xyz.drivingRecorder">
+    package="com.xyz.DrivingRecorder">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="com.xyz.DrivingRecorder.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -35,18 +35,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VideoRecordeActivity"
+            android:name="com.xyz.DrivingRecorder.VideoRecordeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".VideoManageActivity"
+            android:name="com.xyz.DrivingRecorder.VideoManageActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".SettingActivity"
+            android:name="com.xyz.DrivingRecorder.SettingActivity"
             android:label="@string/app_setting"
             android:screenOrientation="portrait" />
-        <activity android:name=".VideoRecorde2Activity" />
+        <activity android:name="com.xyz.DrivingRecorder.VideoRecorde2Activity" />
 
-        <service android:name=".DeviceSensorService" />
+        <service android:name="com.xyz.DrivingRecorder.DeviceSensorService" />
     </application>
 
 </manifest>

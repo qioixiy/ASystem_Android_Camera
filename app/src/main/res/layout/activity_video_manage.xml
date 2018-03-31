@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.xyz.drivingRecorder.SlideListView
+    <com.xyz.DrivingRecorder.SlideListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </com.xyz.drivingRecorder.SlideListView>
+    </com.xyz.DrivingRecorder.SlideListView>
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder; /**
+package com.xyz.DrivingRecorder; /**
  * 加速度传感,陀螺仪，压力传感器，数据收集
  *
  */

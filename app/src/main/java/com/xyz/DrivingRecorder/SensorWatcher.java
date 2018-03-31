@@ -1,16 +1,10 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Vibrator;
-import android.util.Log;
-import android.widget.TextView;
-
-import static android.content.Context.VIBRATOR_SERVICE;
 
 public class SensorWatcher implements ISensorWatcher {
 

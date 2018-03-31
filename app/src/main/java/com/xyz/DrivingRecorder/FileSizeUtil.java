@@ -1,6 +1,5 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;

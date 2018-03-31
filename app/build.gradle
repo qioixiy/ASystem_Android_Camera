@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.xyz.drivingRecorder"
+        applicationId "com.xyz.DrivingRecorder"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

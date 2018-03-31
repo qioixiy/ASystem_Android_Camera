@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import android.annotation.TargetApi;
 import android.app.Activity;

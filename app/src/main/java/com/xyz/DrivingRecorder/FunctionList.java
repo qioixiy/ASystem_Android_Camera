@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import java.util.ArrayList;
 import java.util.List;

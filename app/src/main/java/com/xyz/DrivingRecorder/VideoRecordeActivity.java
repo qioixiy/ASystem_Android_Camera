@@ -1,4 +1,4 @@
-package com.xyz.drivingRecorder;
+package com.xyz.DrivingRecorder;
 
 import android.app.Activity;
 import android.content.Context;
@@ -385,7 +385,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
     public static String getStoragePathBase() {
         // File extDir = Environment.getExternalStorageDirectory();
-        return "/storage/emulated/0/drivingRecorder/";
+        return "/storage/emulated/0/DrivingRecorder/";
     }
 
     void toggleButtonOnClickStart(View v) {

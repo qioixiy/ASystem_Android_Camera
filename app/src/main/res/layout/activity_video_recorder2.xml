@@ -6,12 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.xyz.drivingRecorder.MovieRecorderView
+    <com.xyz.DrivingRecorder.MovieRecorderView
         android:id="@+id/camera2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:adjustViewBounds="true" >
-    </com.xyz.drivingRecorder.MovieRecorderView>
+    </com.xyz.DrivingRecorder.MovieRecorderView>
 
     <LinearLayout
         android:layout_width="match_parent"

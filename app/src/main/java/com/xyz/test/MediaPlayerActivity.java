@@ -13,7 +13,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.xyz.drivingRecorder.R;
+import com.xyz.DrivingRecorder.R;
 
 import java.util.ArrayList;
 
