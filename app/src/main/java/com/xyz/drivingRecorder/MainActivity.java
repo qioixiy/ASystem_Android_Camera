@@ -23,7 +23,6 @@ public class MainActivity extends Activity {
 
     private ListView mListView;
     private BaseAdapter adapter;
-    private SensorWatcher sensorWatcher;
 
     private int recorderState = 0;
 
@@ -50,19 +49,11 @@ public class MainActivity extends Activity {
         recorderState = 0;
 
         super.onResume();
-
-        if (sensorWatcher != null) {
-            sensorWatcher.onResume();
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (sensorWatcher != null) {
-            sensorWatcher.onPause();
-        }
     }
 
     @Override
@@ -73,23 +64,8 @@ public class MainActivity extends Activity {
 
     private void initSensorInfo() {
 
-        boolean selector = true;
-        
-        if (selector) {
-            Intent intentOne = new Intent(this, DeviceSensorService.class);
-            startService(intentOne);
-        } else {
-            sensorWatcher = new SensorWatcher(this);
-
-            MySensorListener mySensorListener = new MySensorListener(this);
-            mySensorListener.registerHandler(new MySensorListener.IHandler() {
-                @Override
-                public void handle(String data) {
-                    requestRecorder("active_trigger");
-                }
-            });
-            sensorWatcher.registerSensorEventListener(mySensorListener);
-        }
+        Intent intentOne = new Intent(this, DeviceSensorService.class);
+        startService(intentOne);
     }
 
     private void initListView() {

@@ -36,8 +36,6 @@ import me.weyye.hipermission.PermissionCallback;
 public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
-    private SensorWatcher mSensorWatcher;
-
     private final int MSG_RECORDER_DONE = 0x01;
 
     public interface AcitivityLifeCycle {
@@ -97,8 +95,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
         if (mAcitivityLifeCycle != null) {
             mAcitivityLifeCycle.onResume();
         }
-
-        mSensorWatcher.onResume();
     }
 
     @Override
@@ -107,13 +103,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
             mAcitivityLifeCycle.onPause();
         }
         super.onPause();
-
-        mSensorWatcher.onPause();
     }
 
     private void initSensorInfo() {
-
-        mSensorWatcher = new SensorWatcher(this);
 
         MySensorListener mySensorListener = new MySensorListener(this);
         mySensorListener.registerHandler(new MySensorListener.IHandler() {
@@ -124,7 +116,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 mVideoRecorderMethod.stop();
             }
         });
-        mSensorWatcher.registerSensorEventListener(mySensorListener);
     }
 
     @Override
