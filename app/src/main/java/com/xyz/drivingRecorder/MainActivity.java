@@ -48,14 +48,18 @@ public class MainActivity extends Activity {
 
         super.onResume();
 
-        sensorWatcher.onResume();
+        if (sensorWatcher != null) {
+            sensorWatcher.onResume();
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        sensorWatcher.onPause();
+        if (sensorWatcher != null) {
+            sensorWatcher.onPause();
+        }
     }
 
     @Override
@@ -66,7 +70,7 @@ public class MainActivity extends Activity {
 
     private void initSensorInfo() {
 
-        boolean selector = false;
+        boolean selector = true;
         
         if (selector) {
             Intent intentOne = new Intent(this, DeviceSensorService.class);

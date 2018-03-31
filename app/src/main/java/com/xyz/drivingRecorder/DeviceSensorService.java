@@ -61,10 +61,9 @@ public class DeviceSensorService extends Service {
 //        sm.registerListener(mySensorListener, sensoPress,
 //                SensorManager.SENSOR_DELAY_NORMAL);
 
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        m_wklk = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, DeviceSensorService.class.getName());
-        m_wklk.acquire();
-
+//        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        m_wklk = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, DeviceSensorService.class.getName());
+//        m_wklk.acquire();
     }
 
     @Override
