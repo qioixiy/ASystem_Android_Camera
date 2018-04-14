@@ -134,7 +134,7 @@ public class MovieRecorderView extends LinearLayout implements OnErrorListener {
                 camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
             }
 
-            isOpenCamera = true;
+            //isOpenCamera = true;
         } catch (Exception e) {
             e.printStackTrace();
             freeCameraResource();
