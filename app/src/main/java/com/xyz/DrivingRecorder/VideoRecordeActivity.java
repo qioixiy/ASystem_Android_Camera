@@ -1,8 +1,10 @@
 package com.xyz.DrivingRecorder;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -87,6 +89,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
         initView2();
 
         initSensorInfo();
+
+        initRecviver();
     }
 
     @Override
@@ -96,11 +100,14 @@ public class VideoRecordeActivity extends AppCompatActivity {
             mAcitivityLifeCycle.onResume();
         }
 
+        registerReceiver(mMyBroadcastReceiver, intentFilter); //注册监听
+
         StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW);
     }
 
     @Override
     protected void onPause() {
+        unregisterReceiver(mMyBroadcastReceiver); //取消监听
 
         StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE);
 
@@ -127,6 +134,30 @@ public class VideoRecordeActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         toggleButtonOnClickStop(null);
+    }
+
+    private class MyBroadcastReceiver extends BroadcastReceiver
+    {
+        public void onReceive(Context context, Intent intent)
+        {
+            String action = intent.getAction();
+            if(action.equals("Capture.Stop")) {
+                if (StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_CAPTURE_RUNNING)) {
+                    StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_STOPING);
+
+                    Log.i(TAG, "capture stop request");
+
+                    toggleButtonOnClickStop(null);
+                }
+            }
+        }
+    }
+
+    private MyBroadcastReceiver mMyBroadcastReceiver = new MyBroadcastReceiver();
+    IntentFilter intentFilter = new IntentFilter();
+
+    private void initRecviver() {
+        intentFilter.addAction("Capture.Stop");
     }
 
     private void initSys() {
@@ -377,7 +408,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
         if (mVideoRecorderMethod != null) {
             if (!mCanBeStart) {
                 mVideoRecorderMethod.start();
+                StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_RUNNING);
             } else {
+                StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW);
                 mVideoRecorderMethod.stop();
             }
         }

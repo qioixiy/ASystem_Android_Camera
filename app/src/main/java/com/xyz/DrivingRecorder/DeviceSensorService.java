@@ -76,11 +76,14 @@ public class DeviceSensorService extends Service {
         registerHandler(new IHandler() {
             @Override
             public void handle(String str) {
+                String systemStatus = StaticValue.getSystemStatus();
 
-                if (StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_IDEL)
-                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_HIDE)
-                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW)
-                        || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE)) {
+                Log.i(TAG, "before SystemStatus:" + systemStatus);
+
+                if (systemStatus.equals(StaticValue.SYSTEM_STATUS_IDEL)
+                        || systemStatus.equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_HIDE)
+                        || systemStatus.equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW)
+                        || systemStatus.equals(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE)) {
 
                     StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_STARTING);
 
@@ -94,9 +97,12 @@ public class DeviceSensorService extends Service {
                     intent.putExtras(b);
 
                     getApplication().startActivity(intent);
-                } else {
-                    Log.i(TAG, "SystemStatus:" + StaticValue.getSystemStatus());
+                } else if (systemStatus.equals(StaticValue.SYSTEM_STATUS_CAPTURE_RUNNING)) {
+                    Intent intent = new Intent("Capture.Stop");
+                    sendBroadcast(intent);
                 }
+
+                Log.i(TAG, "after SystemStatus:" + StaticValue.getSystemStatus());
             }
         });
     }
