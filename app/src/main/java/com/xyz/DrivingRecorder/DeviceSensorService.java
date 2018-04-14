@@ -82,6 +82,8 @@ public class DeviceSensorService extends Service {
                         || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_MAIN_ACTIVITY_SHOW)
                         || StaticValue.getSystemStatus().equals(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE)) {
 
+                    StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_STARTING);
+
                     Intent intent = new Intent(getBaseContext(), VideoRecordeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
