@@ -39,6 +39,29 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
     private final int MSG_RECORDER_DONE = 0x01;
+    private boolean mRunning = false;
+    private boolean mPending = false;
+    private enum State {
+        State_Started,
+        State_Stoped,
+    };
+    private State mState = State.State_Stoped;
+
+    private State getState() {
+        return mState;
+    }
+
+    private void setState(State state) {
+        mState = state;
+    }
+
+    private boolean getPending() {
+        return mPending;
+    }
+
+    private void setPending(boolean b) {
+        mPending = b;
+    }
 
     public interface AcitivityLifeCycle {
         void onResume();
@@ -96,6 +119,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         if (mAcitivityLifeCycle != null) {
             mAcitivityLifeCycle.onResume();
         }
@@ -103,18 +127,29 @@ public class VideoRecordeActivity extends AppCompatActivity {
         registerReceiver(mMyBroadcastReceiver, intentFilter); //注册监听
 
         StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW);
+
+        if (getPending()) {
+            mDelayHandler.postDelayed(new TriggerRunnable(this), 1500);
+            setPending(false);
+        }
     }
 
     @Override
     protected void onPause() {
-        unregisterReceiver(mMyBroadcastReceiver); //取消监听
-
-        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE);
+        super.onPause();
 
         if (mAcitivityLifeCycle != null) {
             mAcitivityLifeCycle.onPause();
         }
-        super.onPause();
+
+        unregisterReceiver(mMyBroadcastReceiver); //取消监听
+
+        StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_HIDE);
+
+        if (mState == State.State_Started) {
+            toggleButtonOnClickStop(null);
+            setPending(true);
+        }
     }
 
     private void initSensorInfo() {
@@ -175,7 +210,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
         if (data.equals("active_trigger")) {
             mDelayHandler.postDelayed(new TriggerRunnable(this), 1500);
         }
-
     }
 
     private void initView() {
@@ -279,7 +313,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
         });
 
         mVideoRecorderMethod = new VideoRecorderMethod() {
-            private boolean mRunning = false;
 
             @Override
             public void start() {
@@ -344,6 +377,9 @@ public class VideoRecordeActivity extends AppCompatActivity {
     }
 
     private void notifyMediaFile(File file) {
+
+        setState(State.State_Stoped);
+
         mCanBeStart = true;
 
         try {
@@ -404,7 +440,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
         });
     }
 
-    private void updateSelect() {
+    private synchronized void updateSelect() {
         if (mVideoRecorderMethod != null) {
             if (!mCanBeStart) {
                 mVideoRecorderMethod.start();
@@ -413,6 +449,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 StaticValue.setSystemStatus(StaticValue.SYSTEM_STATUS_CAPTURE_ACTIVITY_SHOW);
                 mVideoRecorderMethod.stop();
             }
+
+            setState(mCanBeStart ? State.State_Stoped : State.State_Started);
         }
     }
 
