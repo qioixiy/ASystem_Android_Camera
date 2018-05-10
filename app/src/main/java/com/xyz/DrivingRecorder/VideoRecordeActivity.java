@@ -39,6 +39,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
     private final int MSG_RECORDER_DONE = 0x01;
+    private int mRecoderTimeStep = 60*10;// 10min
     private boolean mRunning = false;
     private boolean mPending = false;
     private enum State {
@@ -265,7 +266,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 btn_start.setEnabled(false);
                 btn_stop.setEnabled(true);
 
-                mDelayHandler.postDelayed(new TimeoutRunnable(mContext), SettingDataModel.instance().getVideoFileTimeSize() * 1000);
+                mDelayHandler.postDelayed(new TimeoutRunnable(mContext), mRecodeTime.getTime()*1000);
             }
 
             @Override
@@ -321,11 +322,27 @@ public class VideoRecordeActivity extends AppCompatActivity {
                     return;
                 }
 
+                int time = mRecodeTime.getTime();
+                if (time <= 0) {
+                    Log.e(TAG, "Recode process done");
+                    toggleButtonOnClickStop(null);
+                    return;
+                }
+
+                movieRecorderView.setRecordMaxTime(time);
+
                 mRunning = true;
                 movieRecorderView.record(new MovieRecorderView.OnRecordFinishListener() {
                     @Override
                     public void onRecordFinish() {
                         Log.e(TAG, "done");
+
+                        if (!mRunning) {
+                            Log.e(TAG, "not running");
+                            return;
+                        }
+                        mRunning = false;
+                        mIsUserInput = false;
 
                         Message msg = new Message();
                         msg.what = MSG_RECORDER_DONE;
@@ -337,7 +354,6 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 btn_start.setEnabled(false);
                 btn_stop.setEnabled(true);
 
-                movieRecorderView.setRecordMaxTime(SettingDataModel.instance().getVideoFileTimeSize());
             }
 
             @Override
@@ -360,7 +376,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
             }
         };
 
-        movieRecorderView.setRecordMaxTime(SettingDataModel.instance().getVideoFileTimeSize());
+        movieRecorderView.setRecordMaxTime(mRecodeTime.getTime());
 
         mVideoRecorderDone = new VideoRecorderDone() {
             @Override
@@ -372,9 +388,19 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
                 File tFile = movieRecorderView.getRecordFile();
                 notifyMediaFile(tFile);
+
+                if (mRecodeTime.needRestart() && !mIsUserInput) {
+                    Log.i(TAG, "Recoder restart");
+                    mRestarting = true;
+                    toggleButtonOnClickStart(null);
+                }
+                mIsUserInput = true;
             }
         };
     }
+
+    private boolean mRestarting = false;
+    private boolean mIsUserInput = true;
 
     private void notifyMediaFile(File file) {
 
@@ -467,6 +493,11 @@ public class VideoRecordeActivity extends AppCompatActivity {
             return;
         }
 
+        if (!mRestarting) {
+            mRecodeTime.resetTime();
+        }
+        mRestarting = false;
+
         if (!mCanBeStart) {
             return;
         }
@@ -486,6 +517,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     }
 
     void toggleButtonOnClickStop(View v) {
+
         if (mCanBeStart) {
             return;
         }
@@ -553,6 +585,32 @@ public class VideoRecordeActivity extends AppCompatActivity {
         // 最后通知图库更新
         context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
     }
+
+    private class RecodeTime {
+        public int getTime() {
+            int ret = mRecodeTime;
+            if (mRecodeTime > mRecoderTimeStep) {
+                mRecodeTime -= mRecoderTimeStep;
+                ret = mRecoderTimeStep;
+            } else {
+                mRecodeTime = 0;
+            }
+            return ret;
+        }
+
+        public void resetTime() {
+            mRecodeTime = SettingDataModel.instance().getVideoFileTimeSize();
+            Log.i(TAG, "resetTime");
+        }
+
+        public boolean needRestart() {
+            return mRecodeTime != 0;
+        }
+
+        // unit:s
+        private int mRecodeTime = SettingDataModel.instance().getVideoFileTimeSize();
+    }
+    private RecodeTime mRecodeTime = new RecodeTime();
 
     private class TriggerRunnable implements Runnable {
 
