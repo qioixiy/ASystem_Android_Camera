@@ -31,6 +31,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.weyye.hipermission.HiPermission;
 import me.weyye.hipermission.PermissionCallback;
@@ -435,6 +437,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
         // 最后通知图库更新
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.fromFile(file)));
+
+        mRecodeTransaction.addRecordItem(new RecordItem(path));
     }
 
     private void initCameraView() {
@@ -639,4 +643,37 @@ public class VideoRecordeActivity extends AppCompatActivity {
             toggleButtonOnClickStop(null);
         }
     }
+
+
+    public class RecordItem {
+        public RecordItem(String path) {
+            this.path = path;
+            mcurrentTimeMillis = System.currentTimeMillis();
+        }
+        private String path;
+        private long mcurrentTimeMillis = 0;
+    }
+
+    public class RecodeTransaction {
+
+        public void addRecordItem(RecordItem recordItem) {
+            mRecordItems.add(recordItem);
+
+            gcRecordItem();
+        }
+
+        public void gcRecordItem() {
+            if (mRecordItems.size() > mMaxSize) {
+                RecordItem recordItem = mRecordItems.get(0);
+                mRecordItems.remove(0);
+
+                DeleteFileUtil.delete(recordItem.path);
+            }
+        }
+
+        private List<RecordItem> mRecordItems = new ArrayList<>();
+        private int mMaxSize = 10;
+    }
+
+    private RecodeTransaction mRecodeTransaction = new RecodeTransaction();
 }
