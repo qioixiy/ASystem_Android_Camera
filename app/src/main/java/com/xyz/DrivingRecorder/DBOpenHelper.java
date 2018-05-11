@@ -28,7 +28,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                         "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"+
                         "CollisionDetectionSensitivity VARCHAR(255),"+
                         "VideoStorageSize VARCHAR(255),"+
-                        "VideoFileTimeSize VARCHAR(255))";
+                        "VideoFileTimeSize VARCHAR(255),"+
+                        "VideoFileTimeStepSize VARCHAR(255))";
         sqliteDatabase.execSQL(sql);
     }
 

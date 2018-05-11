@@ -17,6 +17,9 @@ public class SettingActivity extends AppCompatActivity {
     private SeekBar seekBarProgressVideoSize;
     private TextView textViewVideoSize;
 
+    private SeekBar seekBarProgressVideoStepSize;
+    private TextView textViewVideoStepSize;
+
     private SeekBar seekBarProgressVideoStorageSize;
     private TextView textViewVideoStorageSize;
 
@@ -51,6 +54,9 @@ public class SettingActivity extends AppCompatActivity {
 
         seekBarProgressVideoSize = (SeekBar) findViewById(R.id.progress_video_size);
         textViewVideoSize = (TextView) findViewById(R.id.text_video_size);
+
+        seekBarProgressVideoStepSize = (SeekBar) findViewById(R.id.progress_video_step_size);
+        textViewVideoStepSize = (TextView) findViewById(R.id.text_video_step_size);
 
         seekBarProgressVideoStorageSize = (SeekBar) findViewById(R.id.progress_storage_size);
         textViewVideoStorageSize = (TextView) findViewById(R.id.text_storage_size);
@@ -90,6 +96,24 @@ public class SettingActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textViewVideoSize.setText(Integer.toString(progress));
                 SettingDataModel.instance().setVideoFileTimeSize(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+
+        int videoFileTimeStepSize = SettingDataModel.instance().getVideoFileTimeStepSize();
+        seekBarProgressVideoStepSize.setProgress(videoFileTimeStepSize);
+        textViewVideoStepSize.setText(Integer.toString(videoFileTimeStepSize));
+        seekBarProgressVideoStepSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textViewVideoStepSize.setText(Integer.toString(progress));
+                SettingDataModel.instance().setVideoFileTimeStepSize(progress);
             }
 
             @Override

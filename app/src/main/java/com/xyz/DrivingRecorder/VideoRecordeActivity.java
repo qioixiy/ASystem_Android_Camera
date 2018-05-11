@@ -41,7 +41,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
     private static final String TAG = VideoRecordeActivity.class.getSimpleName();
 
     private final int MSG_RECORDER_DONE = 0x01;
-    private int mRecoderTimeStep = 60*10;// 10min
+    private int mRecoderTimeStep = SettingDataModel.instance().getVideoFileTimeStepSize();
     private boolean mRunning = false;
     private boolean mPending = false;
     private enum State {

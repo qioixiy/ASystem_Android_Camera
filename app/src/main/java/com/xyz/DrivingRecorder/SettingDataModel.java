@@ -7,6 +7,8 @@ import android.util.Log;
 
 public class SettingDataModel {
 
+    String TAG = getClass().getSimpleName();
+
     static SettingDataModel settingDataModel = null;
 
     DBStore mDBStore = new DBStore();
@@ -26,11 +28,13 @@ public class SettingDataModel {
 
     private final int CollisionDetectionSensitivity = 5;
     private final int VideoFileTimeSize = 60;
+    private final int VideoFileTimeStepSize = 30;
     private final int VideoStorageSize = 100;
 
     private int mCollisionDetectionSensitivity = CollisionDetectionSensitivity;
-    private int mVideoFileTimeSize = 60; //s
-    private int mVideoStorageSize = 100; //M
+    private int mVideoFileTimeSize = VideoFileTimeSize; //s
+    private int mVideoFileTimeStepSize = VideoFileTimeStepSize; //s
+    private int mVideoStorageSize = VideoStorageSize; //M
 
     private int loadDataFromeDB() {
         SQLiteDatabase sqliteDatabase = mDBStore.getDBOpenHelper().getWritableDatabase();
@@ -41,10 +45,12 @@ public class SettingDataModel {
         {
             String CollisionDetectionSensitivity = cursor.getString(cursor.getColumnIndex("CollisionDetectionSensitivity"));
             String videoFileTimeSize = cursor.getString(cursor.getColumnIndex("VideoFileTimeSize"));
+            String videoFileTimeStepSize = cursor.getString(cursor.getColumnIndex("VideoFileTimeStepSize"));
             String VideoStorageSize = cursor.getString(cursor.getColumnIndex("VideoStorageSize"));
 
             mCollisionDetectionSensitivity = Integer.parseInt(CollisionDetectionSensitivity);
             mVideoFileTimeSize = Integer.parseInt(videoFileTimeSize);
+            mVideoFileTimeStepSize = Integer.parseInt(videoFileTimeStepSize);
             mVideoStorageSize = Integer.parseInt(VideoStorageSize);
         }
 
@@ -62,6 +68,23 @@ public class SettingDataModel {
 
     public int getCollisionDetectionSensitivity() {
         return mCollisionDetectionSensitivity;
+    }
+
+    public void setVideoFileTimeStepSize(int i) {
+        mVideoFileTimeStepSize = i;
+
+        try {
+            SQLiteDatabase sqliteDatabase = mDBStore.getDBOpenHelper().getWritableDatabase();
+            String sql = "update table_setting set VideoFileTimeStepSize=? where 1";
+            Object bindArgs[] = new Object[]{"" + mVideoFileTimeStepSize};
+            sqliteDatabase.execSQL(sql, bindArgs);
+        } catch(Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    public int getVideoFileTimeStepSize() {
+        return mVideoFileTimeStepSize;
     }
 
     public void setVideoFileTimeSize(int i) {
@@ -115,11 +138,15 @@ public class SettingDataModel {
             {
                 int count = cursor.getInt(0);
                 if (count == 0) {
-                    sql = "insert into table_setting(CollisionDetectionSensitivity,VideoStorageSize,VideoFileTimeSize) values (?,?,?)";
-                    // 传递过来的name与path分别按顺序替换上面sql语句的两个?，自动转换类型，下同，不再赘述
-                    Object bindArgs[] = new Object[]{""+CollisionDetectionSensitivity,""+VideoFileTimeSize,""+VideoStorageSize};
-                    // 执行这条无返回值的sql语句
-                    sqliteDatabase.execSQL(sql, bindArgs);
+                    try {
+                        sql = "insert into table_setting(CollisionDetectionSensitivity,VideoStorageSize,VideoFileTimeSize,VideoFileTimeStepSize) values (?,?,?,?)";
+                        // 传递过来的name与path分别按顺序替换上面sql语句的两个?，自动转换类型，下同，不再赘述
+                        Object bindArgs[] = new Object[]{"" + CollisionDetectionSensitivity, "" + VideoStorageSize, "" + VideoFileTimeSize, "" + VideoFileTimeStepSize};
+                        // 执行这条无返回值的sql语句
+                        sqliteDatabase.execSQL(sql, bindArgs);
+                    } catch(Exception e) {
+                        Log.e(TAG, e.toString());
+                    }
                 }
             }
 

@@ -190,7 +190,8 @@ public class DeviceSensorService extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.d(TAG, "onLocationChanged: " + ".." + Thread.currentThread().getName());
+            Log.d(TAG, "onLocationChanged: " + ".." + Thread.currentThread().getName()
+                + location.getLatitude() + "," + location.getLongitude());
             //如果位置发生变化,重新显示
 
             double tCurLatitude = location.getLatitude();
