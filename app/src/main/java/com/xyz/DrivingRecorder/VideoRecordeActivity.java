@@ -667,6 +667,11 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 RecordItem recordItem = mRecordItems.get(0);
                 mRecordItems.remove(0);
 
+
+                VideoDataModel videoDataModel = new VideoDataModel();
+                videoDataModel.setContext(VideoRecordeActivity.this);
+                videoDataModel.deleteVideoMetaDataByPath(recordItem.path);
+
                 DeleteFileUtil.delete(recordItem.path);
             }
         }

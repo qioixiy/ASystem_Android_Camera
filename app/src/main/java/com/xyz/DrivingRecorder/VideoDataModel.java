@@ -141,4 +141,18 @@ public class VideoDataModel {
             Log.e(TAG, e.toString());
         }
     }
+
+    // 删除路径对应的记录
+    public void deleteVideoMetaDataByPath(String path) {
+        try {
+            ArrayList<VideoDataModel.VideoMetaData> list = queryAll();
+            for (VideoDataModel.VideoMetaData data : list) {
+                if (data.getPath().equals(path)) {
+                    deleteVideoMetaData(data.getId());
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+    }
 }
