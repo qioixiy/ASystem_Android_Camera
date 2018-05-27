@@ -24,6 +24,7 @@ import android.os.PowerManager.WakeLock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import java.util.Date;
 
 public class DeviceSensorService extends Service {
     private static final String TAG = "DeviceSensorService";
@@ -31,6 +32,8 @@ public class DeviceSensorService extends Service {
     private SensorManager mSensorManager;
     private WakeLock mWakeLock;
     private IHandler mHandler;
+
+    private Date mPrevActionDate;
 
     private LocationManager locationManager;
     private String locationProvider;
@@ -48,6 +51,25 @@ public class DeviceSensorService extends Service {
 
     public void registerHandler(IHandler handler) {
         mHandler = handler;
+    }
+
+    public DeviceSensorService() {
+        mPrevActionDate = new Date(System.currentTimeMillis());
+    }
+
+    private boolean checkActionValid() {
+        boolean ret = false;
+
+        Date curActionDate = new Date(System.currentTimeMillis());
+
+        long cur = curActionDate.getTime();
+        long pre = mPrevActionDate.getTime();
+        if(pre + 2*1000 <= cur) {
+            mPrevActionDate = curActionDate;
+            ret = true;
+        }
+
+        return ret;
     }
 
     @Override
@@ -89,6 +111,11 @@ public class DeviceSensorService extends Service {
         registerHandler(new IHandler() {
             @Override
             public void handle(String str) {
+                if (!checkActionValid()) {
+                    Log.w(TAG, "drop");
+                    return;
+                }
+
                 String systemStatus = StaticValue.getSystemStatus();
 
                 Log.i(TAG, "before SystemStatus:" + systemStatus);

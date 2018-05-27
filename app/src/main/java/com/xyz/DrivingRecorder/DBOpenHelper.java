@@ -22,7 +22,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 "create table if not exists table_video_metadata("+
                         "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"+
                         "name VARCHAR(255),"+
-                        "path VARCHAR(1024))";//如果初次运行，建立一张表，建表的时候注意，自增是AUTOINCREMENT，而不是mysql的AUTO_INCREMENT
+                        "path VARCHAR(1024),"+
+                        "desc VARCHAR(1024))";//如果初次运行，建立一张表，建表的时候注意，自增是AUTOINCREMENT，而不是mysql的AUTO_INCREMENT
         sqliteDatabase.execSQL(sql);
         sql = "create table if not exists table_setting("+
                         "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"+

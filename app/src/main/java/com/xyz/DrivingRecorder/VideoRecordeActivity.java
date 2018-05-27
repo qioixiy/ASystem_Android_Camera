@@ -174,6 +174,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
         toggleButtonOnClickStop(null);
     }
 
+    boolean mCollisionStop = false;
     private class MyBroadcastReceiver extends BroadcastReceiver
     {
         public void onReceive(Context context, Intent intent)
@@ -185,6 +186,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
                     Log.i(TAG, "capture stop request");
 
+                    mCollisionStop = true;
                     toggleButtonOnClickStop(null);
                 }
             }
@@ -428,8 +430,10 @@ public class VideoRecordeActivity extends AppCompatActivity {
 
         String name = file.getName();
         String path = file.getAbsolutePath();
+        String desc = mCollisionStop ? "碰撞结束" : "用户结束";
         videoMetaData.setName(name);
         videoMetaData.setPath(path);
+        videoMetaData.setDesc(desc);
         videoDataModel.insertVideoMetaData(videoMetaData);
 
         Log.i(TAG, path);
@@ -439,6 +443,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 Uri.fromFile(file)));
 
         mRecodeTransaction.addRecordItem(new RecordItem(path));
+
+        mCollisionStop = false;
     }
 
     private void initCameraView() {
@@ -489,12 +495,39 @@ public class VideoRecordeActivity extends AppCompatActivity {
         return "/storage/emulated/0/DrivingRecorder/";
     }
 
-    void toggleButtonOnClickStart(View v) {
+    private boolean forcedRecoveryStorageSpace() {
+        boolean ret = true;
+
+        VideoDataModel videoDataModel = new VideoDataModel();
+        videoDataModel.setContext(VideoRecordeActivity.this);
+        ArrayList<VideoDataModel.VideoMetaData> recordItems = videoDataModel.queryAll();
+
+        for (VideoDataModel.VideoMetaData data : recordItems) {
+            String desc = data.getDesc();
+            if (desc.equals("碰撞结束")) {
+                continue;
+            }
+
+            String path = data.getPath();
+            videoDataModel.deleteVideoMetaDataByPath(path);
+            break;
+        }
+
+        return ret;
+    }
+
+    private void toggleButtonOnClickStart(View v) {
 
         // check storage space
         if (!checkStorageHaveSpace()) {
             showToast("空间不足，需要先释放存储空间");
-            return;
+
+            if (forcedRecoveryStorageSpace()) {
+                showToast("释放存储空间成功，继续录制");
+            } else {
+                showToast("释放存储空间失败，不能继续录制，没能够自动回收空间，全都是紧要的文件，只能手动释放空间");
+                return;
+            }
         }
 
         if (!mRestarting) {
@@ -667,11 +700,11 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 RecordItem recordItem = mRecordItems.get(0);
                 mRecordItems.remove(0);
 
-
                 VideoDataModel videoDataModel = new VideoDataModel();
                 videoDataModel.setContext(VideoRecordeActivity.this);
                 videoDataModel.deleteVideoMetaDataByPath(recordItem.path);
 
+                showToast("本次录制超过10个文件了，删除老的文件" + recordItem.path);
                 DeleteFileUtil.delete(recordItem.path);
             }
         }

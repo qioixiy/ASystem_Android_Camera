@@ -14,6 +14,7 @@ public class VideoDataModel {
         private int id;
         private String name;
         private String path;
+        private String desc;
 
         public int getId() {
             return id;
@@ -37,6 +38,14 @@ public class VideoDataModel {
 
         public void setPath(String path) {
             this.path = path;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
         }
     }
 
@@ -62,9 +71,9 @@ public class VideoDataModel {
 
     public void insertVideoMetaData(VideoMetaData metaData) {
         sqliteDatabase = getDBOpenHelper().getWritableDatabase();// 以读写方法打开数据库，不仅仅是写，getReadableDatabase()是只读
-        String sql = "insert into table_video_metadata(name,path) values (?,?)";
+        String sql = "insert into table_video_metadata(name,path,desc) values (?,?,?)";
         // 传递过来的name与path分别按顺序替换上面sql语句的两个?，自动转换类型，下同，不再赘述
-        Object bindArgs[] = new Object[]{metaData.getName(), metaData.getPath()};
+        Object bindArgs[] = new Object[]{metaData.getName(), metaData.getPath(), metaData.getDesc()};
         // 执行这条无返回值的sql语句
         sqliteDatabase.execSQL(sql, bindArgs);
     }
@@ -94,6 +103,7 @@ public class VideoDataModel {
             data.setId(cursor.getInt(cursor.getColumnIndex("id")));
             data.setName(cursor.getString(cursor.getColumnIndex("name")));
             data.setPath(cursor.getString(cursor.getColumnIndex("path")));
+            data.setDesc(cursor.getString(cursor.getColumnIndex("desc")));
             return data;
         }
         return null;// 没有返回null
@@ -125,6 +135,8 @@ public class VideoDataModel {
                     .getColumnIndex("name")));
             data.setPath(cursor.getString(cursor
                     .getColumnIndex("path")));
+            data.setDesc(cursor.getString(cursor
+                    .getColumnIndex("desc")));
             dataArrayList.add(data);
         }
         return dataArrayList;

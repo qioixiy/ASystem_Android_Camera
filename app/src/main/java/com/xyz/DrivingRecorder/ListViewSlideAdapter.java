@@ -42,6 +42,7 @@ public class ListViewSlideAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final String strName = dataList.get(position).getName();
         final String strContext = dataList.get(position).getPath();
+        final String strDesc = dataList.get(position).getDesc();
         View view;
         ViewHolder viewHolder;
         if (null == convertView) {
@@ -62,7 +63,7 @@ public class ListViewSlideAdapter extends BaseAdapter {
 
         viewHolder.img.setImageResource(R.drawable.video_icon);
         viewHolder.tvName.setText(strName);
-        viewHolder.tvContext.setText("点击播放视频");
+        viewHolder.tvContext.setText("录制原因：" + strDesc);
         viewHolder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

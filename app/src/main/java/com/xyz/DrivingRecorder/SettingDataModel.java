@@ -27,7 +27,7 @@ public class SettingDataModel {
     }
 
     private final int CollisionDetectionSensitivity = 5;
-    private final int VideoFileTimeSize = 60;
+    private final int VideoFileTimeSize = 60*60*2;//two hours
     private final int VideoFileTimeStepSize = 30;
     private final int VideoStorageSize = 100;
 
