@@ -442,7 +442,7 @@ public class VideoRecordeActivity extends AppCompatActivity {
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
                 Uri.fromFile(file)));
 
-        mRecodeTransaction.addRecordItem(new RecordItem(path));
+        //mRecodeTransaction.addRecordItem(new RecordItem(path));
 
         mCollisionStop = false;
     }
@@ -516,6 +516,26 @@ public class VideoRecordeActivity extends AppCompatActivity {
         return ret;
     }
 
+    private void forcedGCStorageSpaceTo10Item() {
+        VideoDataModel videoDataModel = new VideoDataModel();
+        videoDataModel.setContext(VideoRecordeActivity.this);
+        ArrayList<VideoDataModel.VideoMetaData> recordItems = videoDataModel.queryAll();
+
+        if (recordItems.size() >= 10) {
+            for (VideoDataModel.VideoMetaData data : recordItems) {
+                String desc = data.getDesc();
+                if (desc.equals("碰撞结束")) {
+                    continue;
+                }
+
+                String path = data.getPath();
+                videoDataModel.deleteVideoMetaDataByPath(path);
+                showToast("删除成功"+path);
+                break;
+            }
+        }
+    }
+
     private void toggleButtonOnClickStart(View v) {
 
         // check storage space
@@ -529,6 +549,8 @@ public class VideoRecordeActivity extends AppCompatActivity {
                 return;
             }
         }
+
+        forcedGCStorageSpaceTo10Item();
 
         if (!mRestarting) {
             mRecodeTime.resetTime();
